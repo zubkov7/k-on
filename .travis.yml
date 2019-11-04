@@ -1,0 +1,27 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      compiler: gcc
+      sudo: required
+    - os: osx
+      compiler: clang
+
+install: skip
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.9
+      - clang-3.9
+    update: true
+
+
+script: skip
+
+notifications:
+  email: false
