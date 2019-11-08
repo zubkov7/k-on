@@ -18,16 +18,16 @@ class Web_server{
 		int pid;
 		void read_config();
 		void kill-master();
-		void create_master();
+		HTTP_master create_master();
 }
 
 
 Class HTTP_master{
 	public:
-		void create_worker();
+		HTTP_worker create_worker();
 		void clean_worker();
 		void kill_worker();
-		void connect(user , worker);
+		bool connect(user , worker);
 		int num_workers;
 		int worker_pid[num_workers];
 		~HTTP_master(){};
@@ -40,6 +40,9 @@ class HTTP_worker{
 		void start_work();
 		HTTP_worker(){};
 		~HTTP_worker(){};
+		status_code status;
+		int timeout;
+		request request;
 	private:
 		void socket();
     //accept connect
@@ -49,7 +52,7 @@ class HTTP_worker{
     //switch(req.method)
 		void process_request();
     //if req is OK
-    void send_file();
+    		void send_file();
     //if bad request
 		void send_bad_response();
     //does connection time end
