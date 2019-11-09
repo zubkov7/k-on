@@ -3,8 +3,8 @@
 
 class RecommendationSystem() {
 public:
-    RecommendationSystem() {};
-    ~RecommendationSystem() {};
+    RecommendationSystem();
+    ~RecommendationSystem();
 
     void get_recommendation();      // вычисляет рекомендации для пользователей
     void update_recommendation();   // меняет рекомендации в соответствии с изменением, например, поставленным

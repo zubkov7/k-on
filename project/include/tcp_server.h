@@ -3,15 +3,16 @@
 
 #include "recommendation_system.h"
 
-class TCP_server {
+class TcpServer {
 public:
-    TCP_Server() {};
-    ~TCP_Server() {};
+    TcpServer();
+    ~TcpServer();
 
     void start();           // устанавливает соединение с мастером
 private:
-    void process_request(); // обрабатывает запрос
     RecommendationSystem recommendations;
+
+    void process_request(); // обрабатывает запрос
 };
 
 #endif  // PROJECT_INCLUDE_TCP_SERVER_H_
