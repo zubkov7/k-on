@@ -8,11 +8,13 @@ public:
     TcpServer();
     ~TcpServer();
 
-    void start();           // устанавливает соединение с мастером
-private:
-    RecommendationSystem recommendations;
+    void start();
+    void create_socket(int port);
 
-    void process_request(); // обрабатывает запрос
+private:
+    RecommendationSystem recommendation_system;
+
+    void process_request();
 };
 
 #endif  // PROJECT_INCLUDE_TCP_SERVER_H_

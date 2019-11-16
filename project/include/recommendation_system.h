@@ -1,19 +1,24 @@
 #ifndef PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
 #define PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
 
-class RecommendationSystem() {
+#include <vector>
+
+#include "db_worker_recommendation.h"
+#include "db_entities.h"
+
+class RecommendationSystem {
 public:
     RecommendationSystem();
     ~RecommendationSystem();
 
-    void get_recommendation();      // вычисляет рекомендации для пользователей
-    void update_recommendation();   // меняет рекомендации в соответствии с изменением, например, поставленным
-                                    // лайком
-    void get_popular();             // вычисляет список популярных в мире аудиозаписей
-    void get_similar();             // вычисляет список аудиозаписей, похожих на данную
-    void get_new();                 // вычисляет список новинок
+    std::vector<Song> get_recommendations(int user_id);
+    void update_recommendations();
+    std::vector<Song> get_popular();
+    std::vector<Song> get_new();
+    std::vector<Song> get_similar(int song_id);
+
 private:
-    // методы алгоритмов
+    DbWorkerRecommendation db_worker;
 };
 
 #endif  // PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
