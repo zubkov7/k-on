@@ -1,21 +1,29 @@
 #include <db_wrapper.h>
 
 #include <cppconn/driver.h>
+#include <cppconn/statement.h>
 
 DbWrapper::DbWrapper(const std::string &host, const std::string &user, const std::string &password) {
-    sql::Driver *dr = get_driver_instance();
-//    sql::mysql::MySQL_Driver *driver = sql::mysql::get_mysql_driver_instance();
-    connection = dr->connect(host, user, password);
-    std::cout << connection->isValid() << std::endl;
-    connection->setSchema("mydb");
+    sql::Driver *driver = get_driver_instance();
+    connection = driver->connect(host, user, password);
+    connection->setSchema("test");
 }
 
 DbWrapper::~DbWrapper() {
+    connection->close();
     delete connection;
 }
 
-void *DbWrapper::make_request(const std::string &request) {
-    return nullptr;
+bool DbWrapper::execute(const std::string &request) const {
+    sql::Statement *statement = connection->createStatement();
+
+    return statement->execute(request);
 }
 
+sql::ResultSet *DbWrapper::execute_query(const std::string &query) const {
+    sql::Statement *statement = connection->createStatement();
+    sql::ResultSet *result = statement->executeQuery(query);
 
+    delete statement;
+    return result;
+}

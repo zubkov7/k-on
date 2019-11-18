@@ -1,5 +1,5 @@
-#ifndef K_ON_INCLUDE_DB_ENTITIES_H_
-#define K_ON_INCLUDE_DB_ENTITIES_H_
+#ifndef K_ON_DB_ENTITIES_H
+#define K_ON_DB_ENTITIES_H
 
 #include <iostream>
 
@@ -37,4 +37,4 @@ struct Recommendation {
     int song_id;
 };
 
-#endif //K_ON_INCLUDE_DB_ENTITIES_H_
+#endif //K_ON_DB_ENTITIES__

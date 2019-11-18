@@ -1,5 +1,5 @@
-#ifndef PROJECT_INCLUDE_TCP_SERVER_H_
-#define PROJECT_INCLUDE_TCP_SERVER_H_
+#ifndef K_ON_TCP_SERVER_H
+#define K_ON_TCP_SERVER_H
 
 #include "recommendation_system.h"
 
@@ -17,4 +17,4 @@ private:
     void process_request();
 };
 
-#endif  // PROJECT_INCLUDE_TCP_SERVER_H_
+#endif  // K_ON_TCP_SERVER_H

@@ -1,8 +1,9 @@
-#ifndef PROJECT_INCLUDE_DB_WRAPPER_H_
-#define PROJECT_INCLUDE_DB_WRAPPER_H_
+#ifndef K_ON_DB_WRAPPER_H
+#define K_ON_DB_WRAPPER_H
 
 #include <iostream>
 #include <cppconn/connection.h>
+#include <cppconn/resultset.h>
 
 class DbWrapper {
 public:
@@ -10,10 +11,11 @@ public:
                        const std::string &password="");
     ~DbWrapper();
 
-    void *make_request(const std::string &request);
+    bool execute(const std::string &request) const;
+    sql::ResultSet *execute_query(const std::string &query) const;
 
 private:
     sql::Connection *connection;
 };
 
-#endif  // PROJECT_INCLUDE_DB_WRAPPER_H_
+#endif  // K_ON_DB_WRAPPER_H

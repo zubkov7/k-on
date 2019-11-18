@@ -1,15 +1,15 @@
-#ifndef K_ON_INCLUDE_DBWORKERRECOMMENDATION_H_
-#define K_ON_INCLUDE_DBWORKERRECOMMENDATION_H_
+#ifndef K_ON_DBWORKERRECOMMENDATIONS_H
+#define K_ON_DBWORKERRECOMMENDATIONS_H
 
 #include <vector>
 
 #include "db_wrapper.h"
 #include "db_entities.h"
 
-class DbWorkerRecommendation {
+class DbWorkerRecommendations {
 public:
-    DbWorkerRecommendation();
-    ~DbWorkerRecommendation();
+    DbWorkerRecommendations();
+    ~DbWorkerRecommendations();
 
     std::vector<Song> get_songs();
     std::vector<Song> get_popular_songs(int count);
@@ -21,11 +21,11 @@ public:
     std::vector<Listen> get_listens();
     std::vector<Listen> get_listens(int user_id);
 
-    std::vector<Recommendation> get_recommendations(int user_id);
+    std::vector<Recommendations> get_recommendations(int user_id);
     void set_recommendations(int user_id, std::vector<Song> songs);
 
 private:
     DbWrapper db_wrapper;
 };
 
-#endif  // K_ON_INCLUDE_DBWORKERRECOMMENDATION_H_
+#endif  // K_ON_DBWORKERRECOMMENDATIONS_H

@@ -1,9 +1,9 @@
-#ifndef PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
-#define PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
+#ifndef K_ON_RECOMMENDATION_SYSTEM_H
+#define K_ON_RECOMMENDATION_SYSTEM_H
 
 #include <vector>
 
-#include "db_worker_recommendation.h"
+#include "db_worker_recommendations.h"
 #include "db_entities.h"
 
 class RecommendationSystem {
@@ -21,4 +21,4 @@ private:
     DbWorkerRecommendation db_worker;
 };
 
-#endif  // PROJECT_INCLUDE_RECOMMENDATION_SYSTEM_H_
+#endif  // K_ON_RECOMMENDATION_SYSTEM_H
