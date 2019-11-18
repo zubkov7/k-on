@@ -2,17 +2,18 @@
 #define PROJECT_INCLUDE_DB_WRAPPER_H_
 
 #include <iostream>
-#include <sqlite3.h>
+#include <cppconn/connection.h>
 
 class DbWrapper {
 public:
-    DbWrapper();
+    explicit DbWrapper(const std::string &host="localhost", const std::string &user="root",
+                       const std::string &password="");
     ~DbWrapper();
 
     void *make_request(const std::string &request);
 
 private:
-    sqlite3 *data_base;
+    sql::Connection *connection;
 };
 
 #endif  // PROJECT_INCLUDE_DB_WRAPPER_H_
