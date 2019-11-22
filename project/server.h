@@ -12,13 +12,16 @@
 #include "HTML.h"                   //HTML
 //#include "include/manager.h"      //Manager
 
+//#include <boost/asio.hpp>
+//#include <boost/asio/steady_timer.hpp>
+
 class HTTP_worker {
 public:
     bool start_work();
 
     socket set_socket();
 
-    bool is_busy(bool busy);
+    bool is_busy(busy);
 
     HTTP_worker() {};
 
@@ -42,38 +45,44 @@ private:
 
     void handle();
 
-    bool write(socket client_socket);
+    bool write(client_socket);
 
-    bool read(socket client_socket);
+    bool read(client_socket);
 
-    bool process_request(Request request);
+    bool process_request(request);
 
-    bool check_deadline(int timeout);
-};
+    bool check_deadline(timeout);
+}
 
 class HTTP_master {
+	
 public:
     ~HTTP_master() {};
 private:
-    HTTP_master(std::string server, int port, int nuw_workers) {};
-    std::vector<HTTP_worker> workers;
+    HTTP_master(server, port, workers) {};
+	
+    vector <HTTP_worker> workers;
+	
     socket server_socket;
     std::string server;
+	
     int port;
+	
     int time_sleep;
+	
+private:
+    HTTP_worker create_worker(workers);
 
-    HTTP_worker create_worker(std::vector<HTTP_worker> workers);
+    bool kill_worker(HTTP_worker);
 
-    bool kill_worker(HTTP_worker worker);
+    bool connect(client_socket, workers);
 
-    bool connect(socket client_socket, std::vector<HTTP_worker> workers);
+    bool read_socket(server_socket);
 
-    bool read_socket(socket server_socket);
-
-    bool get_free_worker(std::vector<HTTP_worker> workers);
+    bool get_free_worker(workers);
 
 
-};
+}
 
 class Web_server {
 public:
@@ -89,16 +98,17 @@ public:
 
 private:
     std::string user;
+	
     int pid;
-
+private:
     bool read_config();
 
-    bool kill_master(HTTP_master master);
+    bool kill_master(HTTP_master);
 
     HTTP_master master;
 
-    HTTP_master create_master(HTTP_master master);
+    HTTP_master create_master(master);
 
-};
+}
 
 #endif
