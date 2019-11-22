@@ -10,11 +10,12 @@
 class TcpServerUser(TcpServer) {
 public:
     TcpServerUser();
-    ~TcpServerUser();user on_get_user(const int id);
+    ~TcpServerUser();
 
 private:
     User user_;
     void handle_request(const std::string request);
+    user on_get_user(const int id);
     bool on_login(const std::string &login, const std::string &pass);
     bool on_register(const std::string &login, const std::string &pass);
     int on_inc_listening(const int song_id, const int user_id);
