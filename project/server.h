@@ -7,13 +7,10 @@
 #include <string>
 
 
-//#include <boost/asio/ip/tcp.hpp>    //socket
-//#include <boost/beast/http.hpp>     //Request
-#include "HTML.h"                   //HTML
-//#include "include/manager.h"      //Manager
-
-//#include <boost/asio.hpp>
-//#include <boost/asio/steady_timer.hpp>
+//#include <boost/asio/ip/tcp.hpp>    
+//#include <boost/beast/http.hpp>     
+#include "HTML.h"                   
+//#include "include/manager.h"
 
 class HTTP_worker {
 public:
@@ -21,7 +18,7 @@ public:
 
     socket set_socket();
 
-    bool is_busy(busy);
+    bool is_busy(bool busy);
 
     HTTP_worker() {};
 
@@ -45,44 +42,38 @@ private:
 
     void handle();
 
-    bool write(client_socket);
+    bool write(socket client_socket);
 
-    bool read(client_socket);
+    bool read(socket client_socket);
 
-    bool process_request(request);
+    bool process_request(Request request);
 
-    bool check_deadline(timeout);
-}
+    bool check_deadline(int timeout);
+};
 
 class HTTP_master {
-	
 public:
     ~HTTP_master() {};
 private:
-    HTTP_master(server, port, workers) {};
-	
-    vector <HTTP_worker> workers;
-	
+    HTTP_master(std::string server, int port, int nuw_workers) {};
+    std::vector<HTTP_worker> workers;
     socket server_socket;
     std::string server;
-	
     int port;
-	
     int time_sleep;
-	
-private:
-    HTTP_worker create_worker(workers);
 
-    bool kill_worker(HTTP_worker);
+    HTTP_worker create_worker(std::vector<HTTP_worker> workers);
 
-    bool connect(client_socket, workers);
+    bool kill_worker(HTTP_worker worker);
 
-    bool read_socket(server_socket);
+    bool connect(socket client_socket, std::vector<HTTP_worker> workers);
 
-    bool get_free_worker(workers);
+    bool read_socket(socket server_socket);
+
+    bool get_free_worker(std::vector<HTTP_worker> workers);
 
 
-}
+};
 
 class Web_server {
 public:
@@ -98,17 +89,16 @@ public:
 
 private:
     std::string user;
-	
     int pid;
-private:
+
     bool read_config();
 
-    bool kill_master(HTTP_master);
+    bool kill_master(HTTP_master master);
 
     HTTP_master master;
 
-    HTTP_master create_master(master);
+    HTTP_master create_master(HTTP_master master);
 
-}
+};
 
 #endif
