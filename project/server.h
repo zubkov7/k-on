@@ -3,61 +3,102 @@
 
 #include <iostream>
 #include <thread>
-#include <boost/asio.hpp>
-#include <boost/asio/steady_timer.hpp>
-
-class Web_server{
-	public:
-		Web_server(){};
-		~Web_server(){};
-		void start();
-		void restart();
-		void stop();
-	private:
-		string user;
-		int pid;
-		void read_config();
-		void kill-master();
-		HTTP_master create_master();
-}
+#include <vector>
+#include <string>
 
 
-Class HTTP_master{
-	public:
-		HTTP_worker create_worker();
-		void clean_worker();
-		void kill_worker();
-		bool connect(user , worker);
-		int num_workers;
-		int worker_pid[num_workers];
-		~HTTP_master(){};
-	private:
-		HTTP_master(){};
-}
+//#include <boost/asio/ip/tcp.hpp>    //socket
+//#include <boost/beast/http.hpp>     //Request
+#include "HTML.h"                   //HTML
+//#include "include/manager.h"      //Manager
 
-class HTTP_worker{
-	public:
-		void start_work();
-		HTTP_worker(){};
-		~HTTP_worker(){};
-		status_code status;
-		int timeout;
-		request request;
-	private:
-		void socket();
-    //accept connect
-		void accept();
-    //recreate parser and write it in buffer
-		void read_request();
-    //switch(req.method)
-		void process_request();
-    //if req is OK
-    		void send_file();
-    //if bad request
-		void send_bad_response();
-    //does connection time end
-		bool check_deadline();
-    //insert dinamic data into html in special places(for example '$$$')
-		void insert_dinamic();
-}
+class HTTP_worker {
+public:
+    bool start_work();
+
+    socket set_socket();
+
+    bool is_busy(bool busy);
+
+    HTTP_worker() {};
+
+    ~HTTP_worker() {};
+
+private:
+    //разноситьь по приватам функции и поля
+    int timeout;
+
+    Request request;
+
+    socket client_socket;
+
+    bool busy;
+
+    HTML html;
+
+    Manager manager;
+
+private:
+
+    void handle();
+
+    bool write(socket client_socket);
+
+    bool read(socket client_socket);
+
+    bool process_request(Request request);
+
+    bool check_deadline(int timeout);
+};
+
+class HTTP_master {
+public:
+    ~HTTP_master() {};
+private:
+    HTTP_master(std::string server, int port, int nuw_workers) {};
+    std::vector<HTTP_worker> workers;
+    socket server_socket;
+    std::string server;
+    int port;
+    int time_sleep;
+
+    HTTP_worker create_worker(std::vector<HTTP_worker> workers);
+
+    bool kill_worker(HTTP_worker worker);
+
+    bool connect(socket client_socket, std::vector<HTTP_worker> workers);
+
+    bool read_socket(socket server_socket);
+
+    bool get_free_worker(std::vector<HTTP_worker> workers);
+
+
+};
+
+class Web_server {
+public:
+    Web_server() {};
+
+    ~Web_server() {};
+
+    bool start();
+
+    bool restart();
+
+    bool stop();
+
+private:
+    std::string user;
+    int pid;
+
+    bool read_config();
+
+    bool kill_master(HTTP_master master);
+
+    HTTP_master master;
+
+    HTTP_master create_master(HTTP_master master);
+
+};
+
 #endif
