@@ -15,6 +15,7 @@ public:
     Manager();
     ~Manager();
     std::string handle_request(const std::string &request);
+
 private:
     std::string on_user(const std::string &request);
     std::string on_recommendation(const std::string &request);
