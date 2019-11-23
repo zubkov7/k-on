@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "user.h"
+#include "db_entities.h"
 
 class Manager(TcpClient) {
 public:
