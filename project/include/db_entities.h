@@ -1,7 +1,6 @@
 #ifndef K_ON_DB_ENTITIES_H
 #define K_ON_DB_ENTITIES_H
 
-#include <iostream>
 
 struct User {
     User(int id, std::string login, std::string password) : id(id), login(std::move(login)),
@@ -13,15 +12,16 @@ struct User {
 };
 
 struct Song {
-    Song(int id, std::string name, std::string author, std::string genre, int duration) : id(id), name(
-            std::move(name)), author(std::move(author)), genre(
-            std::move(genre)), duration(duration) {}
+    Song(int id, std::string name, std::string author, std::string genre, int duration,
+         std::string date) : id(id), name(std::move(name)), author(std::move(author)), genre(std::move(genre)),
+                             duration(duration), date(std::move(date)) {}
 
     int id;
     std::string name;
     std::string author;
     std::string genre;
     int duration;
+    std::string date;
 };
 
 struct LikeDislike {

@@ -3,6 +3,7 @@
 
 #include "recommendation_system.h"
 
+
 class TcpServer {
 public:
     TcpServer();
@@ -12,7 +13,7 @@ public:
     void create_socket(int port);
 
 private:
-    RecommendationSystem _recommendation_system;
+    RecommendationSystem recommendation_system;
 
 private:
     void process_request();

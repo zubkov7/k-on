@@ -12,11 +12,10 @@ find_package(Threads REQUIRED)
 
 set(SOURCE_FILES
         src/db_wrapper.cpp
-        src/db_worker_recommendations.cpp)
+        )
 
 include_directories(
         include
-#        ${GTEST_INCLUDE_DIRS}
 )
 
 add_library(db_work_lib STATIC ${SOURCE_FILES})

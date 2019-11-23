@@ -1,10 +1,11 @@
 #include <iostream>
 
-#include <db_wrapper.h>
-#include <db_worker_recommendations.h>
+#include "db_wrapper.h"
+
 
 int main() {
-    DbWrapper wrapper = DbWrapper();
+    DbWrapper wrapper = DbWrapper("test");
+
     try {
         wrapper.execute("create table user ("
                         "id mediumint not null auto_increment,"
@@ -15,6 +16,7 @@ int main() {
     } catch (sql::SQLException &e) {
         std::cout << "ERROR: " << e.what() << std::endl;
     }
+
     wrapper.execute("insert into user (login, password) values"
                     "('alice', 'alice'), ('bob', 'bob'),"
                     "('nemo', 'nemo');");

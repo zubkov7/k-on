@@ -5,6 +5,7 @@
 #include <cppconn/connection.h>
 #include <cppconn/resultset.h>
 
+
 class DbWrapper {
 public:
     explicit DbWrapper(const std::string &database, const std::string &host="localhost",

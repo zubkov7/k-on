@@ -1,7 +1,8 @@
-#include <db_wrapper.h>
-
 #include <cppconn/driver.h>
 #include <cppconn/statement.h>
+
+#include "db_wrapper.h"
+
 
 DbWrapper::DbWrapper(const std::string &database, const std::string &host,
                      const std::string &user, const std::string &password) {

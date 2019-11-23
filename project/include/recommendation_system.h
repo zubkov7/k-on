@@ -1,10 +1,9 @@
 #ifndef K_ON_RECOMMENDATION_SYSTEM_H
 #define K_ON_RECOMMENDATION_SYSTEM_H
 
-#include <vector>
-
 #include "db_worker_recommendations.h"
 #include "db_entities.h"
+
 
 class RecommendationSystem {
 public:
