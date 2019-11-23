@@ -12,8 +12,9 @@ public:
     void create_socket(int port);
 
 private:
-    RecommendationSystem recommendation_system;
+    RecommendationSystem _recommendation_system;
 
+private:
     void process_request();
 };
 
