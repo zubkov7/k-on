@@ -7,22 +7,23 @@
 #include <string>
 
 
+
 //#include <boost/asio/ip/tcp.hpp>    
 //#include <boost/beast/http.hpp>     
-#include "HTML.h"                   
+#include "HTML.h"
 //#include "include/manager.h"
 
 class HTTP_worker {
 public:
+    HTTP_worker() {}
+
+    ~HTTP_worker() {}
+
     bool start_work();
 
     socket set_socket();
 
     bool is_busy(bool busy);
-
-    HTTP_worker() {};
-
-    ~HTTP_worker() {};
 
 private:
     //разноситьь по приватам функции и поля
@@ -53,9 +54,11 @@ private:
 
 class HTTP_master {
 public:
-    ~HTTP_master() {};
+    ~HTTP_master() {}
+
 private:
-    HTTP_master(std::string server, int port, int nuw_workers) {};
+    HTTP_master(std::string server, int port, int nuw_workers) {}
+
     std::vector<HTTP_worker> workers;
     socket server_socket;
     std::string server;
@@ -77,9 +80,9 @@ private:
 
 class Web_server {
 public:
-    Web_server() {};
+    Web_server() {}
 
-    ~Web_server() {};
+    ~Web_server() {}
 
     bool start();
 

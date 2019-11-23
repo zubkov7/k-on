@@ -133,4 +133,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+Gtest
+cmake-build-debug
+project/cmake-build-debug
 # End of https://www.gitignore.io/api/linux,clion,macos

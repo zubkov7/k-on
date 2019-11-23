@@ -1,26 +1,28 @@
 #include <gtest/gtest.h>
 #include <cstddef>
 #include <iostream>
-#include <iostream>
 #include <fstream>
-
-extern "C" {
 #include "server.h"
-}
+#include <string>
+
 
 TEST(NULL, check_start) {
     std::string host = "127.0.0.1";
     std::string result = "";
     int port = 8000;
     char buffer[128];
+
     std::ofstream outfile1("config.txt");
-    outfile1 << "workers:4 host:127.0.0.1 port:8000" << std::endl;
+    outfile1 << "workers:4 host:" + host + "port:" +  (std::to_string(port)) << std::endl;
     outfile1.close();
+
     std::ofstream outfile2("index.html");
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
-    Web_server serv = new Web_server();
+
+    Web_server serv = Web_server();
     serv.start();
+
     FILE *cmd = popen("telnet 127.0.0.1:8000", "r");
     while (!feof(cmd)) {
         // use buffer to read and add to result
@@ -73,5 +75,4 @@ TEST(NULL, check_restart) {
         myfile.close();
     }
     EXPECT_NE(line, line1);
-
 }

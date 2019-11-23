@@ -1,10 +1,8 @@
 #include <gtest/gtest.h>
 #include <cstddef>
 #include <iostream>
-
-extern "C" {
 #include "server.h"
-}
+
 
 TEST(NULL, check_create) {
     HTTP_master master1 = new HTTP_master("127.0.0.1", 8000, 1);
