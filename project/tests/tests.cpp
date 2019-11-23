@@ -225,6 +225,23 @@ TEST(DbWorkerRecommendations, set_new_recommendations) {
     EXPECT_EQ(expected_recommendations, got_recommendations);
 }
 
+TEST(DbWorkerRecommendations, get_recommendations) {
+    DbWorkerRecommendations worker("test");
+    const int user_id = 3;
+    const int size = 2;
+
+    std::vector<int> got_recommendations = worker.get_recommendations(user_id, size);
+    EXPECT_EQ(size, got_recommendations.size());
+}
+
+TEST(DbWorkerRecommendations, get_more_recommendations) {
+    DbWorkerRecommendations worker("test");
+    const int user_id = 3;
+
+    std::vector<int> got_recommendations = worker.get_recommendations(user_id, 5);
+    EXPECT_EQ(3, got_recommendations.size());
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
 
