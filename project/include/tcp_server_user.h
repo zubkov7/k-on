@@ -5,16 +5,22 @@
 #ifndef K_ON_TCP_SERVER_USER_H
 #define K_ON_TCP_SERVER_USER_H
 
+#include <string>
+
 #include "user.h"
+#include "db_entities.h"
 
 class TcpServerUser(TcpServer) {
 public:
-    TcpServerUser();
+    TcpServerUser(const std::string &db_path, const std::string &host,
+                  const std::string &login, const std::string &pass);
     ~TcpServerUser();
     void handle_request(const std::string request);
 
 private:
-    User user_;
+    User _user;
+
+private:
     user on_get_user(const int id);
     bool on_login(const std::string &login, const std::string &pass);
     bool on_register(const std::string &login, const std::string &pass);
