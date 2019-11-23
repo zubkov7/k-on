@@ -4,10 +4,12 @@
 #include <string>
 
 #include "db_worker_user.h"
+#include "db_entities.h"
 
 class User {
 public:
-    User(const std::string &user, const std::string &pass);
+    User(const std::string &db_path, const std::string &host,
+         const std::string &login, const std::string &pass);
     ~User() {}
     user get_user(const int id);
     bool login(const std::string &login, const std::string &pass);
@@ -16,8 +18,8 @@ public:
     bool like_song(const int song_id, const int user_id, const bool value);
 
 private:
-    DBWorkerUser db_worker;
-    user user_;
+    DBWorkerUser _db_worker;
+    user _user;
 };
 
 
