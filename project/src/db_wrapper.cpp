@@ -3,10 +3,11 @@
 #include <cppconn/driver.h>
 #include <cppconn/statement.h>
 
-DbWrapper::DbWrapper(const std::string &host, const std::string &user, const std::string &password) {
+DbWrapper::DbWrapper(const std::string &database, const std::string &host,
+                     const std::string &user, const std::string &password) {
     sql::Driver *driver = get_driver_instance();
     connection = driver->connect(host, user, password);
-    connection->setSchema("test");
+    connection->setSchema(database);
 }
 
 DbWrapper::~DbWrapper() {

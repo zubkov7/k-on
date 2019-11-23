@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <db_wrapper.h>
+#include <db_worker_recommendations.h>
 
 int main() {
     DbWrapper wrapper = DbWrapper();

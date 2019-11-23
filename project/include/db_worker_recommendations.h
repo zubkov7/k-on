@@ -6,6 +6,7 @@
 #include "db_wrapper.h"
 #include "db_entities.h"
 
+
 class DbWorkerRecommendations {
 public:
     DbWorkerRecommendations();
@@ -21,7 +22,7 @@ public:
     std::vector<Listen> get_listens();
     std::vector<Listen> get_listens(int user_id);
 
-    std::vector<Recommendations> get_recommendations(int user_id);
+    std::vector<Recommendation> get_recommendations(int user_id);
     void set_recommendations(int user_id, std::vector<Song> songs);
 
 private:

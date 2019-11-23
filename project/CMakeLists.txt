@@ -7,14 +7,22 @@ find_library(CONCPP_LIB
         NAMES mysqlcppconn
         PATHS "${CONCPP_LIB_DIR}")
 
+find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
+
 set(SOURCE_FILES
-        src/db_wrapper.cpp)
+        src/db_wrapper.cpp
+        src/db_worker_recommendations.cpp)
 
 include_directories(
         include
+#        ${GTEST_INCLUDE_DIRS}
 )
 
 add_library(db_work_lib STATIC ${SOURCE_FILES})
 
 add_executable(main src/main.cpp)
 target_link_libraries(main db_work_lib ${CONCPP_LIB})
+
+add_executable(tests tests/tests.cpp)
+target_link_libraries(tests db_work_lib ${CONCPP_LIB} ${GTEST_LIBRARIES} Threads::Threads)
