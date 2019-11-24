@@ -5,6 +5,8 @@
 
 
 TEST(NULL, work) {
+
     HTTP_worker worker;
     EXPECT_EQ(worker.start_work(), true);
+
 }

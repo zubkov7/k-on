@@ -6,14 +6,17 @@
 #include <string>
 
 
-TEST(NULL, check_start) {
+TEST(NULL, check_timeout) {
     std::string host = "127.0.0.1";
     std::string result = "";
     int port = 8000;
+    //default timeout will be 1 sec
+    float timeout = 0.00001;
     char buffer[128];
 
     std::ofstream outfile1("config.txt");
-    outfile1 << "workers:4 host:" + host + "port:" +  (std::to_string(port)) << std::endl;
+    outfile1 << "workers:4 host:" + host + "port:" + (std::to_string(port)) + "timeout:" + (std::to_string(timeout))
+             << std::endl;
     outfile1.close();
 
     std::ofstream outfile2("index.html");
@@ -30,7 +33,88 @@ TEST(NULL, check_start) {
             result += buffer;
     }
     pclose(cmd);
-    EXPECT_EQ("Hello , world!", result);
+    EXPECT_EQ("504 Gateway Timeout", result);
+}
+
+TEST(NULL, check_url) {
+    std::string host = "127.0.0.1";
+    std::string result = "";
+    int port = 8000;
+    char buffer[128];
+
+    std::ofstream outfile1("config.txt");
+    outfile1 << "workers:4 host:" + host + "port:" + (std::to_string(port)) << std::endl;
+    outfile1.close();
+
+    std::ofstream outfile2("index.html");
+    outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
+    outfile2.close();
+
+    Web_server serv = Web_server();
+    serv.start();
+
+    FILE *cmd = popen("telnet 127.0.0.1:8000/badway", "r");
+    while (!feof(cmd)) {
+        // use buffer to read and add to result
+        if (fgets(buffer, 128, cmd) != NULL)
+            result += buffer;
+    }
+    pclose(cmd);
+    EXPECT_EQ("404 Not Found", result);
+}
+
+TEST(NULL, check_request) {
+    std::string host = "127.0.0.1";
+    std::string result = "";
+    int port = 8000;
+    char buffer[128];
+
+    std::ofstream outfile1("config.txt");
+    outfile1 << "workers:4 host:" + host + "port:" + (std::to_string(port)) << std::endl;
+    outfile1.close();
+
+    std::ofstream outfile2("index.html");
+    outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
+    outfile2.close();
+
+    Web_server serv = Web_server();
+    serv.start();
+
+    FILE *cmd = popen("telnet 127.0.0.1:8000/?badparam=99", "r");
+    while (!feof(cmd)) {
+        // use buffer to read and add to result
+        if (fgets(buffer, 128, cmd) != NULL)
+            result += buffer;
+    }
+    pclose(cmd);
+    EXPECT_EQ("400 Bad Request", result);
+}
+
+TEST(NULL, check_start) {
+    std::string host = "127.0.0.1";
+    std::string result = "";
+    int port = 8000;
+    char buffer[128];
+
+    std::ofstream outfile1("config.txt");
+    outfile1 << "workers:4 host:" + host + "port:" + (std::to_string(port)) << std::endl;
+    outfile1.close();
+
+    std::ofstream outfile2("index.html");
+    outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
+    outfile2.close();
+
+    Web_server serv = Web_server();
+    serv.start();
+
+    FILE *cmd = popen("telnet 127.0.0.1:8000", "r");
+    while (!feof(cmd)) {
+        // use buffer to read and add to result
+        if (fgets(buffer, 128, cmd) != NULL)
+            result += buffer;
+    }
+    pclose(cmd);
+    EXPECT_EQ("200 OK\n <html><head></head><body>Hello , world!</body></html>", result);
 }
 
 TEST(NULL, check_stop) {
