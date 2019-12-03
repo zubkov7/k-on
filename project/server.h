@@ -1,10 +1,11 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <iostream>
 #include <thread>
 #include <vector>
 #include <string>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/http.hpp>
 
 
 
@@ -21,7 +22,7 @@ public:
 
     bool start_work();
 
-    socket set_socket();
+    boost::asio::ip::tcp::socket set_socket();
 
     bool is_busy(bool busy);
 
@@ -29,25 +30,25 @@ private:
     //разноситьь по приватам функции и поля
     int timeout;
 
-    Request request;
+//    Request request;
 
-    socket client_socket;
+//    socket client_socket;
 
     bool busy;
 
     HTML html;
 
-    Manager manager;
+//    Manager manager;
 
 private:
 
     void handle();
 
-    bool write(socket client_socket);
+//    bool write(socket client_socket);
 
-    bool read(socket client_socket);
+//    bool read(socket client_socket);
 
-    bool process_request(Request request);
+//    bool process_request(Request request);
 
     bool check_deadline(int timeout);
 };
@@ -60,7 +61,7 @@ private:
     HTTP_master(std::string server, int port, int nuw_workers) {}
 
     std::vector<HTTP_worker> workers;
-    socket server_socket;
+//    socket server_socket;
     std::string server;
     int port;
     int time_sleep;
@@ -69,9 +70,9 @@ private:
 
     bool kill_worker(HTTP_worker worker);
 
-    bool connect(socket client_socket, std::vector<HTTP_worker> workers);
+//    bool connect(socket client_socket, std::vector<HTTP_worker> workers);
 
-    bool read_socket(socket server_socket);
+//    bool read_socket(socket server_socket);
 
     bool get_free_worker(std::vector<HTTP_worker> workers);
 
@@ -98,9 +99,9 @@ private:
 
     bool kill_master(HTTP_master master);
 
-    HTTP_master master;
+//    HTTP_master master = HTTP_master::HTTP_master("", 0, 0)
 
-    HTTP_master create_master(HTTP_master master);
+ //   HTTP_master create_master(HTTP_master master);
 
 };
 
