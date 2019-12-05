@@ -82,6 +82,35 @@ TEST(DbWorkerRecommendations, add_likes_dislikes) {
     std::vector<LikeDislike> expected_likes_dislikes = {
             LikeDislike(1, 2, 1, false),
             LikeDislike(2, 3, 1, true),
+            LikeDislike(3, 4, 1, true),
+            LikeDislike(4, 2, 2, false),
+            LikeDislike(5, 4, 2, true),
+            LikeDislike(6, 1, 3, true),
+            LikeDislike(7, 1, 4, false),
+            LikeDislike(8, 2, 4, true),
+            LikeDislike(9, 4, 4, true),
+            LikeDislike(10, 1, 5, false),
+            LikeDislike(11, 1, 6, true),
+            LikeDislike(12, 2, 7, true),
+            LikeDislike(13, 3, 7, true),
+            LikeDislike(14, 4, 7, true),
+            LikeDislike(15, 3, 8, false)
+    };
+
+    for (const auto &like_dislike : expected_likes_dislikes) {
+        EXPECT_TRUE(worker.add_like_dislike(like_dislike.user_id, like_dislike.song_id, like_dislike.value));
+    }
+
+    std::vector<LikeDislike> got_likes_dislikes = worker.get_likes_dislikes();
+    EXPECT_EQ(expected_likes_dislikes, got_likes_dislikes);
+}
+
+TEST(DbWorkerRecommendations, change_likes_dislikes) {
+    DbWorkerRecommendations worker("test");
+
+    std::vector<LikeDislike> expected_likes_dislikes = {
+            LikeDislike(1, 2, 1, false),
+            LikeDislike(2, 3, 1, true),
             LikeDislike(3, 4, 1, false),
             LikeDislike(4, 2, 2, true),
             LikeDislike(5, 4, 2, true),
@@ -97,7 +126,15 @@ TEST(DbWorkerRecommendations, add_likes_dislikes) {
             LikeDislike(15, 3, 8, false)
     };
 
-    for (const auto &like_dislike : expected_likes_dislikes) {
+    std::vector<LikeDislike> changed_likes_dislikes = {
+            LikeDislike(3, 4, 1, false),
+            LikeDislike(4, 2, 2, true),
+            LikeDislike(7, 1, 4, true),
+            LikeDislike(10, 1, 5, true),
+            LikeDislike(12, 2, 7, true),
+    };
+
+    for (const auto &like_dislike : changed_likes_dislikes) {
         EXPECT_TRUE(worker.add_like_dislike(like_dislike.user_id, like_dislike.song_id, like_dislike.value));
     }
 

@@ -51,7 +51,12 @@ bool DbWorker::add_like_dislike(int user_id, int song_id, bool value) {
     );
 
     if (result->next()) {
-        // TODO: implement
+        wrapper.execute(
+                "update like_dislike "
+                "set value = " + std::to_string(value) +
+                " where user_id = " + std::to_string(user_id) +
+                " and song_id = " + std::to_string(song_id)
+        );
     } else {
         wrapper.execute(
                 "insert into like_dislike (user_id, song_id, value) "
@@ -70,7 +75,12 @@ bool DbWorker::add_listen(int user_id, int song_id, int count) {
     );
 
     if (result->next()) {
-        // TODO: implement
+        wrapper.execute(
+                "update listen "
+                "set count = " + std::to_string(count) +
+                " where user_id = " + std::to_string(user_id) +
+                " and song_id = " + std::to_string(song_id)
+        );
     } else {
         wrapper.execute(
                 "insert into listen (user_id, song_id, count) "
