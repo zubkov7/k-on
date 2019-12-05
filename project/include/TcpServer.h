@@ -2,17 +2,17 @@
 // Created by andrey on 04.12.2019.
 //
 
-#ifndef K_ON_TCP_SERVER_H
-#define K_ON_TCP_SERVER_H
+#ifndef K_ON_TCPSERVER_H
+#define K_ON_TCPSERVER_H
 
 #include <boost/asio.hpp>
 #include <iostream>
 
 #define READ_UNTIL_DELIM "\n"
 
-class Tcp_server {
+class TcpServer {
 public:
-    Tcp_server(unsigned short port);
+    TcpServer(unsigned short port);
     void start_server();
 
 protected:
@@ -27,4 +27,4 @@ protected:
 };
 
 
-#endif  // K_ON_TCP_SERVER_H
+#endif  // K_ON_TCPSERVER_H

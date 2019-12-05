@@ -5,41 +5,41 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
-#include "Tcp_client.h"
+#include "TcpClient.h"
 
-Tcp_client::Tcp_client() :
+TcpClient::TcpClient() :
     socket_(boost::asio::ip::tcp::socket(this->service_)),
     resolver_(boost::asio::ip::tcp::resolver(this->service_)) {}
 
-Tcp_client::~Tcp_client() {
+TcpClient::~TcpClient() {
     socket_.close();
 }
 
-std::string Tcp_client::to_string(boost::asio::streambuf &buf) {
+std::string TcpClient::to_string(boost::asio::streambuf &buf) {
     std::ostringstream tmp;
     tmp << &buf;
     return tmp.str();
 }
 
-void Tcp_client::close_connection() {
+void TcpClient::close_connection() {
     socket_.close();
 }
 
-void Tcp_client::connect(char *host, char *port) {
+void TcpClient::connect(char *host, char *port) {
     this->host_ = std::string(host);
     this->port_ = boost::lexical_cast<unsigned short>(port);
 
     boost::asio::connect(this->socket_, this->resolver_.resolve({host, port}));
 }
 
-void Tcp_client::write(const std::string &message) {
+void TcpClient::write(const std::string &message) {
     boost::asio::streambuf answer;
     std::ostream out(&answer);
     out << message << std::endl;
     boost::asio::write(this->socket_, answer);
 }
 
-std::string Tcp_client::read() {
+std::string TcpClient::read() {
     boost::asio::streambuf received_data;
     boost::asio::read_until(this->socket_, received_data, READ_UNTIL_DELIM);
 

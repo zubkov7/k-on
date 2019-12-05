@@ -2,18 +2,18 @@
 // Created by andrey on 04.12.2019.
 //
 
-#ifndef K_ON_TCP_CLIENT_H
-#define K_ON_TCP_CLIENT_H
+#ifndef K_ON_TCPCLIENT_H
+#define K_ON_TCPCLIENT_H
 
 #include <boost/asio.hpp>
 #include <string>
 
 #define READ_UNTIL_DELIM "\n"
 
-class Tcp_client {
+class TcpClient {
 public:
-    Tcp_client();
-    ~Tcp_client();
+    TcpClient();
+    ~TcpClient();
     void connect(char *host, char *port);
     void write(const std::string &message);
     std::string read();
@@ -31,4 +31,4 @@ private:
 };
 
 
-#endif  // K_ON_TCP_CLIENT_H
+#endif  //K_ON_TCPCLIENT_H
