@@ -10,12 +10,12 @@ public:
     ~DbWorker();
 
     bool add_user(const std::string &login, const std::string &password);
-    bool add_song(const std::string &name, const std::string &author, const std::string &genre, int duration);
+    bool add_song(const std::string &name, const std::string &author, const std::string &genre, int duration,
+                  const std::string &date);
     bool add_like_dislike(int user_id, int song_id, bool value);
     bool add_listen(int user_id, int song_id, int count);
-    bool add_recommendation(int user_id, int song_id);
 
-private:
+protected:
     DbWrapper wrapper;
 };
 
