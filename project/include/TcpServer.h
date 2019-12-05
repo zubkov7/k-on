@@ -2,8 +2,8 @@
 // Created by andrey on 04.12.2019.
 //
 
-#ifndef K_ON_TCPSERVER_H
-#define K_ON_TCPSERVER_H
+#ifndef K_ON_TCP_SERVER_H
+#define K_ON_TCP_SERVER_H
 
 #include <boost/asio.hpp>
 #include <iostream>
@@ -27,4 +27,4 @@ protected:
 };
 
 
-#endif  // K_ON_TCPSERVER_H
+#endif  // K_ON_TCP_SERVER_H
