@@ -15,12 +15,12 @@ public:
     Tcp_server(unsigned short port);
     void start_server();
 
-private:
+protected:
     unsigned short port_;
     boost::asio::io_service service_;
     boost::asio::ip::tcp::acceptor acceptor_;
 
-private:
+protected:
     void on_accept(boost::asio::ip::tcp::socket sock);
     std::string to_string(boost::asio::streambuf &buf);
     virtual std::string handle_request(const std::string &request);  // Если не переопределить, то возвращает request
