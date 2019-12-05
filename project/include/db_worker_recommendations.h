@@ -7,7 +7,7 @@
 
 class DbWorkerRecommendations : public DbWorker {
 public:
-    DbWorkerRecommendations(const std::string &database);
+    explicit DbWorkerRecommendations(const std::string &database);
     ~DbWorkerRecommendations();
 
     std::vector<User> get_users();
@@ -22,8 +22,8 @@ public:
     std::vector<Listen> get_listens();
     std::vector<Listen> get_listens(int user_id);
 
-    std::vector<int> get_recommendations(int user_id, int count);
-    void set_recommendations(int user_id, std::vector<int> song_ids);
+    std::vector<Song> get_recommendations(int user_id, int count=0);
+    void set_recommendations(int user_id, const std::vector<int> &song_ids);
 };
 
 #endif  // K_ON_DBWORKERRECOMMENDATIONS_H
