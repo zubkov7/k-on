@@ -36,7 +36,7 @@ TEST(DbWorkerRecommendations, add_songs) {
     };
 
     for (const auto &song : expected_songs) {
-        EXPECT_TRUE(worker.add_song(song.name, song.author, song.genre, song.duration));
+        EXPECT_TRUE(worker.add_song(song.name, song.author, song.genre, song.duration, song.date));
     }
 
     std::vector<Song> got_songs = worker.get_songs();
@@ -176,7 +176,7 @@ TEST(DbWorkerRecommendations, get_popular_songs) {
     EXPECT_EQ(size, got_songs.size());
 
     std::vector<int> expected_songs = {4, 7, 2};
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < got_songs.size(); i++) {
         EXPECT_EQ(expected_songs[i], got_songs[i].id);
     }
 }
@@ -189,7 +189,7 @@ TEST(DbWorkerRecommendations, get_all_popular_songs) {
     EXPECT_EQ(size, got_songs.size());
 
     std::vector<int> expected_songs = {4, 7, 2, 6, 5, 3, 1, 8};
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < got_songs.size(); i++) {
         EXPECT_EQ(expected_songs[i], got_songs[i].id);
     }
 }
@@ -209,8 +209,10 @@ TEST(DbWorkerRecommendations, set_recommendations) {
     std::vector<int> expected_recommendations = {3, 4, 5};
     worker.set_recommendations(user_id, expected_recommendations);
 
-    std::vector<int> got_recommendations = worker.get_recommendations(user_id, size);
-    EXPECT_EQ(expected_recommendations, got_recommendations);
+    std::vector<Song> got_recommendations = worker.get_recommendations(user_id, size);
+    for (int i = 0; i < size; i++) {
+        EXPECT_EQ(expected_recommendations[i], got_recommendations[i].id);
+    }
 }
 
 TEST(DbWorkerRecommendations, set_new_recommendations) {
@@ -221,8 +223,10 @@ TEST(DbWorkerRecommendations, set_new_recommendations) {
     std::vector<int> expected_recommendations = {2, 3, 8};
     worker.set_recommendations(user_id, expected_recommendations);
 
-    std::vector<int> got_recommendations = worker.get_recommendations(user_id, size);
-    EXPECT_EQ(expected_recommendations, got_recommendations);
+    std::vector<Song> got_recommendations = worker.get_recommendations(user_id, size);
+    for (int i = 0; i < size; i++) {
+        EXPECT_EQ(expected_recommendations[i], got_recommendations[i].id);
+    }
 }
 
 TEST(DbWorkerRecommendations, get_recommendations) {
@@ -230,7 +234,7 @@ TEST(DbWorkerRecommendations, get_recommendations) {
     const int user_id = 3;
     const int size = 2;
 
-    std::vector<int> got_recommendations = worker.get_recommendations(user_id, size);
+    std::vector<Song> got_recommendations = worker.get_recommendations(user_id, size);
     EXPECT_EQ(size, got_recommendations.size());
 }
 
@@ -238,7 +242,7 @@ TEST(DbWorkerRecommendations, get_more_recommendations) {
     DbWorkerRecommendations worker("test");
     const int user_id = 3;
 
-    std::vector<int> got_recommendations = worker.get_recommendations(user_id, 5);
+    std::vector<Song> got_recommendations = worker.get_recommendations(user_id, 5);
     EXPECT_EQ(3, got_recommendations.size());
 }
 
