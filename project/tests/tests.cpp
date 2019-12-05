@@ -25,14 +25,14 @@ TEST(DbWorkerRecommendations, add_songs) {
     DbWorkerRecommendations worker("test");
 
     std::vector<Song> expected_songs = {
-            Song(1, "Nice Boi", "Eskimo Callboy", "metalcore", 159, "01.11.2019"),
-            Song(2, "Black Files", "Ben Howard", "indie folk", 381, "30.09.2011"),
-            Song(3, "Waiting for You", "Nick Cave & The Bad Seeds", "alternative rock", 234, "04.10.2019"),
-            Song(4, "Hunger", "The Score", "alternative rock", 123, "09.08.2019"),
-            Song(5, "Sweet Disposition", "The Temper Trap", "indie rock", 234, "01.01.2008"),
-            Song(6, "Into My Arms", "Nick Cave & The Bad Seeds", "alternative rock", 256, "02.03.1997"),
-            Song(7, "Prey", "The Neighbourhood", "indie pop", 282, "30.10.2015"),
-            Song(8, "Mr. Brightside", "The Killers", "alternative rock", 222, "29.09.2003")
+            Song(1, "Nice Boi", "Eskimo Callboy", "metalcore", 159, "2019-11-01"),
+            Song(2, "Black Files", "Ben Howard", "indie folk", 381, "2011-09-30"),
+            Song(3, "Waiting for You", "Nick Cave & The Bad Seeds", "alternative rock", 234, "2019-10-04"),
+            Song(4, "Hunger", "The Score", "alternative rock", 123, "2019-08-09"),
+            Song(5, "Sweet Disposition", "The Temper Trap", "indie rock", 234, "2008-01-01"),
+            Song(6, "Into My Arms", "Nick Cave & The Bad Seeds", "alternative rock", 256, "1997-03-02"),
+            Song(7, "Prey", "The Neighbourhood", "indie pop", 282, "2015-10-30"),
+            Song(8, "Mr. Brightside", "The Killers", "alternative rock", 222, "2003-09-29")
     };
 
     for (const auto &song : expected_songs) {
