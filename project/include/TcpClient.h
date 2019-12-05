@@ -2,8 +2,8 @@
 // Created by andrey on 04.12.2019.
 //
 
-#ifndef K_ON_TCPCLIENT_H
-#define K_ON_TCPCLIENT_H
+#ifndef K_ON_TCP_CLIENT_H
+#define K_ON_TCP_CLIENT_H
 
 #include <boost/asio.hpp>
 #include <string>
@@ -19,16 +19,16 @@ public:
     std::string read();
     void close_connection();
 
-private:
+protected:
     unsigned short port_;
     std::string host_;
     boost::asio::io_service service_;
     boost::asio::ip::tcp::socket socket_;
     boost::asio::ip::tcp::resolver resolver_;
 
-private:
+protected:
     std::string to_string(boost::asio::streambuf &buf);
 };
 
 
-#endif  //K_ON_TCPCLIENT_H
+#endif  //K_ON_TCP_CLIENT_H
