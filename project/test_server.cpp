@@ -5,7 +5,6 @@
 #include "server.h"
 #include <string>
 
-
 TEST(NULL, check_timeout) {
     std::string host = "127.0.0.1";
     std::string result = "";
@@ -23,8 +22,8 @@ TEST(NULL, check_timeout) {
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
 
-    Web_server serv = Web_server();
-    serv.start();
+    Web_server *serv = new Web_server();
+    serv->start();
 
     FILE *cmd = popen("telnet 127.0.0.1:8000", "r");
     while (!feof(cmd)) {
@@ -50,8 +49,8 @@ TEST(NULL, check_url) {
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
 
-    Web_server serv = Web_server();
-    serv.start();
+    Web_server *serv = new Web_server();
+    serv->start();
 
     FILE *cmd = popen("telnet 127.0.0.1:8000/badway", "r");
     while (!feof(cmd)) {
@@ -77,8 +76,8 @@ TEST(NULL, check_request) {
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
 
-    Web_server serv = Web_server();
-    serv.start();
+    Web_server *serv = new Web_server();
+    serv->start();
 
     FILE *cmd = popen("telnet 127.0.0.1:8000/?badparam=99", "r");
     while (!feof(cmd)) {
@@ -104,8 +103,8 @@ TEST(NULL, check_start) {
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
 
-    Web_server serv = Web_server();
-    serv.start();
+    Web_server *serv = new Web_server();
+    serv->start();
 
     FILE *cmd = popen("telnet 127.0.0.1:8000", "r");
     while (!feof(cmd)) {
@@ -128,9 +127,9 @@ TEST(NULL, check_stop) {
     std::ofstream outfile2("index.html");
     outfile2 << "<html><head></head><body>Hello , world!</body></html>" << std::endl;
     outfile2.close();
-    Web_server serv = new Web_server();
-    serv.start();
-    serv.stop();
+    Web_server *serv = new Web_server();
+    serv->start();
+    serv->stop();
     FILE *cmd = popen("telnet 127.0.0.1:8000", "r");
     while (!feof(cmd)) {
         // use buffer to read and add to result
@@ -144,8 +143,8 @@ TEST(NULL, check_stop) {
 TEST(NULL, check_restart) {
     std::ofstream outfile1("config.txt");
     outfile1 << "workers:4 host:127.0.0.1 port:8000" << std::endl;
-    Web_server serv = new Web_server();
-    serv.start();
+    Web_server *serv = new Web_server();
+    serv->start();
     std::string line;
     std::string line1;
     std::ifstream myfile("pid.txt");
@@ -153,7 +152,7 @@ TEST(NULL, check_restart) {
         while (getline(myfile, line)) {}
         myfile.close();
     }
-    serv.restart();
+    serv->restart();
     if (myfile.is_open()) {
         while (getline(myfile, line1)) {}
         myfile.close();

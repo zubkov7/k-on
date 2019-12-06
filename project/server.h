@@ -1,18 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <thread>
-#include <vector>
-#include <string>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/beast/http.hpp>
-
-
-
-//#include <boost/asio/ip/tcp.hpp>    
-//#include <boost/beast/http.hpp>     
-#include "HTML.h"
-//#include "include/manager.h"
+#define BOOST_ASIO_HAS_STD_STRING_VIEW
+#include "boost/asio.hpp"
 
 class HTTP_worker {
 public:
@@ -36,7 +26,6 @@ private:
 
     bool busy;
 
-    HTML html;
 
 //    Manager manager;
 
@@ -79,29 +68,52 @@ private:
 
 };
 
+class Client : public std::enable_shared_from_this<Client> {
+    boost::asio::ip::tcp::socket m_Sock;
+    char m_Buf[1024];
+    char m_SendBuf[1024];
+
+public:
+    Client(boost::asio::io_service &io) : m_Sock(io) {}
+
+    boost::asio::ip::tcp::socket &sock() { return m_Sock; }
+
+    void read();
+
+    void handleRead(const boost::system::error_code &e,
+                    std::size_t bytes_transferred);
+};
+
 class Web_server {
 public:
-    Web_server() {}
+    Web_server() : acceptor_(service_) {}
 
     ~Web_server() {}
 
-    bool start();
+    void start();
 
-    bool restart();
+    void restart();
 
-    bool stop();
+    void stop();
 
 private:
-    std::string user;
-    int pid;
+    int port;
 
-    bool read_config();
+    boost::asio::ip::address host;
 
-    bool kill_master(HTTP_master master);
+    int threads_num;
 
-//    HTTP_master master = HTTP_master::HTTP_master("", 0, 0)
+    boost::asio::io_service service_;
 
- //   HTTP_master create_master(HTTP_master master);
+    boost::asio::ip::tcp::acceptor acceptor_;
+private:
+    std::map<std::string, std::string> read_config();
+
+    void onAccept(std::shared_ptr<Client> c, const boost::system::error_code &e);
+
+    void startAccept();
+
+    void run();
 
 };
 
