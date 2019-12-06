@@ -14,7 +14,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(./include)
 
 set(USER_SERVER_SRC
-        ./src/main_user_server.cpp
+        src/MainUserServer.cpp
         ./src/TcpServer.cpp
         ./src/TcpServerUser.cpp
         ./src/User.cpp
