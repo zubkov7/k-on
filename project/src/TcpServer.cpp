@@ -17,7 +17,10 @@ TcpServer::TcpServer(unsigned short port) :
 std::string TcpServer::to_string(boost::asio::streambuf &buf) {
     std::ostringstream tmp;
     tmp << &buf;
-    return tmp.str();
+    std::string str = tmp.str();
+    str.erase(std::remove(str.begin(), str.end(), '\r'), str.end());
+    str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+    return str;
 }
 
 void TcpServer::start_server() {
@@ -43,13 +46,14 @@ void TcpServer::on_accept(boost::asio::ip::tcp::socket sock) {
         boost::asio::streambuf received_data;
         boost::asio::read_until(sock, received_data, READ_UNTIL_DELIM);
 
-        std::string received_data_str = this->to_string(received_data);
-        std::cout << "Received data: " << received_data_str;
+        std::string received_data_str = to_string(received_data);
+        std::cout << "Received data: " << received_data_str << std::endl;
 
         // Запись ответа клиенту
         boost::asio::streambuf answer;
         std::ostream out(&answer);
-        out << this->handle_request(received_data_str) << std::endl;
+
+        out << handle_request(received_data_str) << std::endl;
         boost::asio::write(sock, answer);
 
         // Закрытие соединения с клиентом
