@@ -48,13 +48,28 @@ std::vector<Song> DbWorkerRecommendations::get_new_songs(int count) {
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));
     }
-
     return songs;
 }
 
 std::vector<Song> DbWorkerRecommendations::get_popular_songs(int count) {
-    // TODO: implement
-    return std::vector<Song>();
+    std::vector<Song> songs;
+
+    sql::ResultSet *result = wrapper.execute_query(
+            "select song.id, name, author, genre, duration, date, "
+            "sum(if(value = true, 1, -1)) as rating, "
+            "sum(if(count is null, 0, count)) as listens "
+            "from song left join like_dislike on song.id = like_dislike.song_id "
+            "left join listen on like_dislike.user_id = listen.user_id and like_dislike.song_id = listen.song_id "
+            "group by song.id order by rating desc, listens desc "
+            "limit " + std::to_string(count)
+    );
+
+    for (int i = 0; result->next(); i++) {
+        songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
+                           result->getString("genre"), result->getInt("duration"),
+                           result->getString("date"));
+    }
+    return songs;
 }
 
 std::vector<LikeDislike> DbWorkerRecommendations::get_likes_dislikes() {
@@ -139,7 +154,6 @@ std::vector<Song> DbWorkerRecommendations::get_recommendations(int user_id, int 
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));
     }
-
     return songs;
 }
 
