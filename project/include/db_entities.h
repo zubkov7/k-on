@@ -54,12 +54,4 @@ struct Listen {
     unsigned int count;
 };
 
-struct Recommendation {
-    Recommendation(int id, int user_id, int song_id) : id(id), user_id(user_id), song_id(song_id) {}
-
-    int id;
-    int user_id;
-    int song_id;
-};
-
-#endif //K_ON_DB_ENTITIES__
+#endif  // K_ON_DB_ENTITIES__
