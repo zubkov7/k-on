@@ -11,6 +11,8 @@ public:
     ~DbWorkerRecommendations();
 
     std::vector<User> get_users();
+    std::vector<int> get_user_ids();
+    std::vector<int> get_song_ids();
 
     std::vector<Song> get_songs();
     std::vector<Song> get_new_songs(int count);

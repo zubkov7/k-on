@@ -5,7 +5,7 @@ DbWorkerRecommendations::DbWorkerRecommendations(const std::string &database) : 
 
 DbWorkerRecommendations::~DbWorkerRecommendations() = default;
 
-std::vector<User> DbWorkerRecommendations::get_users() {
+std::vector<User> DbWorkerRecommendations::get_users(){
     std::vector<User> users;
 
     sql::ResultSet *result = wrapper.execute_query(
@@ -17,6 +17,32 @@ std::vector<User> DbWorkerRecommendations::get_users() {
                            result->getString("password"));
     }
     return users;
+}
+
+std::vector<int> DbWorkerRecommendations::get_user_ids() {
+    std::vector<int> users;
+
+    sql::ResultSet *result = wrapper.execute_query(
+            "select * from user"
+    );
+
+    for (int i = 0; result->next(); i++) {
+        users.emplace_back(result->getInt("id"));
+    }
+    return users;
+}
+
+std::vector<int> DbWorkerRecommendations::get_song_ids() {
+    std::vector<int> songs;
+
+    sql::ResultSet *result = wrapper.execute_query(
+            "select * from song"
+    );
+
+    for (int i = 0; result->next(); i++) {
+        songs.emplace_back(result->getInt("id"));
+    }
+    return songs;
 }
 
 std::vector<Song> DbWorkerRecommendations::get_songs() {
