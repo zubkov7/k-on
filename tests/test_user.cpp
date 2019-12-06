@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-#include "user.h"
-#include "db_worker_user.h"
+#include "User.h"
+#include "DbWorkerUser.h"
 
 #define DB_PATH "db_path"
 #define DB_HOST "localhost"
