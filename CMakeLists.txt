@@ -16,7 +16,7 @@ add_library(study_std_lib STATIC ${LIB_SOURCE_FILES})
 add_subdirectory(Gtest/googletest-master)
 include_directories(Gtest/googletest-master/googletest/include Gtest/googletest-master/googletest/src )
 
-add_executable(Web_server project/try_asio.cpp project/server.cpp)
+add_executable(Web_server project/main_web_server.cpp project/server.cpp)
 
 target_link_libraries(Web_server gtest gtest_main study_std_lib Boost::program_options)
 
