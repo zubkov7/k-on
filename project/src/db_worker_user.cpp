@@ -1,4 +1,4 @@
-#include "DbWorkerUser.h"
+#include "db_worker_user.h"
 
 DbWorkerUser::DbWorkerUser() {
     // TODO() : определить конструктор

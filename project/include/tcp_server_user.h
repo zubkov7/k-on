@@ -7,8 +7,8 @@
 
 #include <string>
 
-#include "User.h"
-#include "TcpServer.h"
+#include "user.h"
+#include "tcp_server.h"
 
 class TcpServerUser : public TcpServer {
 public:

@@ -14,12 +14,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(./include)
 
 set(USER_SERVER_SRC
-        src/MainUserServer.cpp
-        ./src/TcpServer.cpp
-        ./src/TcpServerUser.cpp
-        ./src/User.cpp
-        ./src/DbWorkerUser.cpp
-        ./src/DbWrapper.cpp)
+        src/main_user_server.cpp
+        src/tcp_server.cpp
+        src/tcp_server_user.cpp
+        src/user.cpp
+        src/db_worker_user.cpp
+        src/db_wrapper.cpp)
 
 add_executable(user_server ${USER_SERVER_SRC})
 target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CONCPP_LIB})
@@ -27,5 +27,5 @@ target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} $
 add_executable(recommendation_server ./src/main_recommendation_server.cpp)
 target_link_libraries(recommendation_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
-add_executable(web_server ./src/Web_server.cpp src/TcpClient.cpp)
+add_executable(web_server src/main_web_server.cpp src/tcp_client.cpp)
 target_link_libraries(web_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

@@ -5,7 +5,7 @@
 #include <boost/lexical_cast.hpp>
 #include <iostream>
 
-#include "TcpClient.h"
+#include "tcp_client.h"
 
 TcpClient::TcpClient() :
     socket_(boost::asio::ip::tcp::socket(this->service_)),

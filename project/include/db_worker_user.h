@@ -5,7 +5,7 @@
 #include <map>
 
 #include "db_entities.h"
-#include "DbWrapper.h"
+#include "db_wrapper.h"
 
 class DbWorkerUser {
 public:

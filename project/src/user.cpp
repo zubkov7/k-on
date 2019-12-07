@@ -1,4 +1,4 @@
-#include "User.h"
+#include "user.h"
 
 User::User() {
     user_ = user(1, "login", "password");
