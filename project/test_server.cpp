@@ -2,9 +2,10 @@
 #include <cstddef>
 #include <iostream>
 #include <fstream>
-#include "server.h"
+#include "include/web_server.h"
 #include <string>
 
+/*
 TEST(NULL, check_timeout) {
     std::string host = "127.0.0.1";
     std::string result = "";
@@ -34,15 +35,16 @@ TEST(NULL, check_timeout) {
     pclose(cmd);
     EXPECT_EQ("504 Gateway Timeout", result);
 }
+*/
 
 TEST(NULL, check_url) {
-    std::string host = "127.0.0.1";
+    std::string host = "0.0.0.0";
     std::string result = "";
-    int port = 8000;
+    int port = 5555;
     char buffer[128];
 
     std::ofstream outfile1("config.txt");
-    outfile1 << "workers:4 host:" + host + "port:" + (std::to_string(port)) << std::endl;
+    outfile1 << "NUM_THREADS:" + 4 + "HOST:" + host + "PORT:" + (std::to_string(port)) << std::endl;
     outfile1.close();
 
     std::ofstream outfile2("index.html");

@@ -4,7 +4,7 @@
 #include <boost/beast/http.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include "server.h"
+#include "web_server.h"
 
 int main(int argc, char *argv[]) {
 
