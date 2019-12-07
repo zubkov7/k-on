@@ -13,11 +13,22 @@
 #define BOOST_ASIO_HAS_STD_STRING_VIEW
 
 void Client::read() {
-    m_Sock.async_read_some(
-            boost::asio::buffer(m_Buf),
-            boost::bind(&Client::handleRead, shared_from_this(),
-                        boost::asio::placeholders::error,
-                        boost::asio::placeholders::bytes_transferred));
+    try {
+        m_Sock.async_read_some(
+                boost::asio::buffer(m_Buf),
+                boost::bind(&Client::handleRead, shared_from_this(),
+                            boost::asio::placeholders::error,
+                            boost::asio::placeholders::bytes_transferred));
+    }
+    catch (boost::system::system_error const &e)
+    {
+        if (e.code() == boost::asio::error::eof) {  // Клиент закрыл соединение
+            std::cout << "-client: Connection closed by peer\n";
+            this->sock().close();
+        } else {
+            boost::throw_exception(e);
+        }
+    }
 }
 
 void Client::handleRead(const boost::system::error_code &e,
@@ -37,6 +48,7 @@ void Client::handleRead(const boost::system::error_code &e,
     boost::beast::error_code er;
     p.put(boost::asio::buffer(m_Buf), er);
     std::cerr << p.release() << std::endl;
+    memset(m_Buf,'\0',1024);
 
     /*Tcp_client tcp_client;
     tcp_client.connect("0.0.0.0", "8080");
@@ -76,7 +88,6 @@ void Web_server::start() {
     m = read_config();
 
 
-    //strtoi?????
     port = atoi(m["PORT"].c_str());
     if (port > 65535 || port < 1024)
         port = DEFAULT_PORT;
@@ -92,7 +103,6 @@ void Web_server::start() {
     acceptor_.bind(endpoint);
     acceptor_.listen(1024);
     startAccept();
-
     std::cerr << "listen on port: " << port << std::endl;
 
 
