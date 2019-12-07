@@ -9,9 +9,15 @@ find_library(CONCPP_LIB
 
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
+find_package(Boost REQUIRED)
 
 set(SOURCE_FILES
+        src/db_entities.cpp
         src/db_wrapper.cpp
+        src/db_worker.cpp
+        src/db_worker_recommendations.cpp
+        src/recommendation_system.cpp
+        src/db_recommendation_system.cpp
         )
 
 include_directories(
