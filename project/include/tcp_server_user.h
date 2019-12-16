@@ -7,22 +7,21 @@
 
 #include <string>
 
-#include "user.h"
+#include "user_system.h"
 #include "tcp_server.h"
 
 class TcpServerUser : public TcpServer {
 public:
     TcpServerUser(unsigned short port);
 private:
-    User user_;
+    UserSystem user_system_;
     
 private:
-    std::string handle_request(const std::string &request) override;
-    std::string on_get_user(int id);
-    std::string on_login(const std::string &login, const std::string &pass);
-    std::string on_register(const std::string &login, const std::string &pass);
-    std::string on_inc_listening(int song_id, int user_id);
-    std::string on_like_song(int song_id, int user_id, bool value);
+    std::string handle_request(const std::string &request) const override;
+    std::string on_login(const std::string &login, const std::string &pass) const;
+    std::string on_register(const std::string &login, const std::string &pass) const;
+    std::string on_inc_listening(int song_id, int user_id) const;
+    std::string on_like_song(int song_id, int user_id, bool value) const;
 };
 
 
