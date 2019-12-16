@@ -9,12 +9,14 @@
 
 #define DEFAULT_PORT 5555
 #define DEFAULT_NUM_THREADS 4
+#define DEFAULT_CONFIG_PATH "/Users/elenaelizarova/CLionProjects/k-on/project/config.txt"
 
 void Web_server::start() {
-    std::map<std::string, std::string> m;
-    m = read_config();
-
-
+    if (config_path =="")
+    {
+        config_path=DEFAULT_CONFIG_PATH;
+    }
+    std::map<std::string, std::string> m = read_config();
     port = atoi(m["PORT"].c_str());
     if (port > 65535 || port < 1024)
         port = DEFAULT_PORT;
@@ -65,7 +67,7 @@ std::map<std::string, std::string> Web_server::read_config() {
     std::string line;
     std::map<std::string, std::string> m;
 
-    std::ifstream in("/Users/elenaelizarova/CLionProjects/k-on/project/config.txt"); //// окрываем файл для чтения
+    std::ifstream in(config_path); //// окрываем файл для чтения
     if (in.is_open()) {
         while (getline(in, line)) {
             std::string key, val;

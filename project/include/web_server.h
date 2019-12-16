@@ -4,10 +4,12 @@
 
 #include "boost/asio.hpp"
 #include "client.h"
+#include <string>
 
 class Web_server {
 public:
-    Web_server() : acceptor_(service_) {}
+    Web_server() : acceptor_(service_),config_path("") {}
+    Web_server(std::string conf) : acceptor_(service_),config_path(conf){}
     ~Web_server() {}
     void start();
     void restart();
@@ -17,6 +19,8 @@ private:
     int port;
     boost::asio::ip::address host;
     int threads_num;
+    std::string html_path;
+    std::string config_path;
     boost::asio::io_service service_;
     boost::asio::ip::tcp::acceptor acceptor_;
 

@@ -2,6 +2,7 @@
 #define K_ON_CLIENT_H
 
 #include "boost/asio.hpp"
+#include <string>
 
 
 class Client : public std::enable_shared_from_this<Client> {
@@ -13,6 +14,7 @@ public:
     Client(boost::asio::io_service &io) : m_Sock(io) {}
     boost::asio::ip::tcp::socket &sock() { return m_Sock; }
     void read();
+    std::string parse_html();
     void handle_read(const boost::system::error_code &e,
                      std::size_t bytes_transferred);
 };
