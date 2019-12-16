@@ -3,13 +3,19 @@
 //
 
 #include <boost/lexical_cast.hpp>
+#include <boost/lambda/bind.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <iostream>
 
 #include "tcp_client.h"
 
 TcpClient::TcpClient() :
-    socket_(boost::asio::ip::tcp::socket(this->service_)),
-    resolver_(boost::asio::ip::tcp::resolver(this->service_)) {}
+        socket_(boost::asio::ip::tcp::socket(this->service_)),
+        resolver_(boost::asio::ip::tcp::resolver(this->service_)),
+        deadline_(this->service_) {
+    deadline_.expires_at(boost::posix_time::pos_infin);
+    check_deadline();
+}
 
 TcpClient::~TcpClient() {
     if (socket_.is_open()) {
@@ -49,43 +55,48 @@ void TcpClient::connect(char *host, char *port) {
 }
 
 void TcpClient::write(const std::string &message) {
-    boost::asio::streambuf answer;
-    std::ostream out(&answer);
-    out << message << std::endl;
-    try {
-        boost::asio::write(this->socket_, answer);
-    }
-    catch (boost::system::system_error const &e) {
-        if (e.code() == boost::asio::error::bad_descriptor || e.code() == boost::asio::error::broken_pipe) {
-            std::cout << "The connection to the server is closed\n";
-        } else {
-            boost::throw_exception(e);
-        }
-    }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
+    std::string data = message + "\r\n";
+
+    deadline_.expires_from_now(boost::posix_time::seconds(TIMEOUT));
+
+    boost::system::error_code ec = boost::asio::error::would_block;
+
+    boost::asio::async_write(socket_, boost::asio::buffer(data), boost::lambda::var(ec) = boost::lambda::_1);
+
+    do {
+        service_.run_one();
+    } while (ec == boost::asio::error::would_block);
+
+    if (ec)
+        throw boost::system::system_error(ec);
 }
 
 std::string TcpClient::read() {
-    boost::asio::streambuf received_data;
+    deadline_.expires_from_now(boost::posix_time::seconds(TIMEOUT));
 
-    try {
-        boost::asio::read_until(this->socket_, received_data, READ_UNTIL_DELIM);
-    }
-    catch (boost::system::system_error const &e) {
-        if (e.code() == boost::asio::error::bad_descriptor || e.code() == boost::asio::error::not_connected) {
-            std::cout << "The connection to the server is closed\n";
-        } else if (e.code() == boost::asio::error::eof) {
-            std::cout << "Server closed connection\n";
-        } else {
-            boost::throw_exception(e);
-        }
-    }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+    boost::system::error_code ec = boost::asio::error::would_block;
+
+    boost::asio::async_read_until(socket_, input_buffer_, READ_UNTIL_DELIM,
+                                  boost::lambda::var(ec) = boost::lambda::_1);
+
+    do {
+        service_.run_one();
+    } while (ec == boost::asio::error::would_block);
+
+    if (ec == boost::asio::error::eof) {
+        std::cout << "Connection closed by server\n";
     }
 
-    std::string received_data_str = this->to_string(received_data);
+    std::string received_data_str = this->to_string(input_buffer_);
     return received_data_str;
+}
+
+void TcpClient::check_deadline() {
+    if (deadline_.expires_at() <= boost::asio::deadline_timer::traits_type::now()) {
+        boost::system::error_code ignored_ec;
+        socket_.close(ignored_ec);
+        deadline_.expires_at(boost::posix_time::pos_infin);
+    }
+
+    deadline_.async_wait(boost::lambda::bind(&TcpClient::check_deadline, this));
 }

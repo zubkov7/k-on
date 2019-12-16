@@ -8,7 +8,8 @@
 #include <boost/asio.hpp>
 #include <string>
 
-#define READ_UNTIL_DELIM "\n"
+#define READ_UNTIL_DELIM "\r\n"
+#define TIMEOUT 10
 
 class TcpClient {
 public:
@@ -25,9 +26,12 @@ protected:
     boost::asio::io_service service_;
     boost::asio::ip::tcp::socket socket_;
     boost::asio::ip::tcp::resolver resolver_;
+    boost::asio::deadline_timer deadline_;
+    boost::asio::streambuf input_buffer_;
 
 protected:
     std::string to_string(boost::asio::streambuf &buf);
+    void check_deadline();
 };
 
 
