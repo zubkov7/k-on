@@ -5,6 +5,7 @@
 
 TEST(DbWorkerRecommendations, add_users) {
     DbWorkerRecommendations worker("test");
+    DbWrapper wrapper("test");
 
     std::vector<User> expected_users = {
             User(1, "alice", "alice"),
