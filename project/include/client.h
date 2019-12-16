@@ -14,7 +14,7 @@ public:
     Client(boost::asio::io_service &io) : m_Sock(io) {}
     boost::asio::ip::tcp::socket &sock() { return m_Sock; }
     void read();
-    std::string parse_html();
+    std::string parse_html(std::string html_way);
     void handle_read(const boost::system::error_code &e,
                      std::size_t bytes_transferred);
 };

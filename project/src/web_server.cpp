@@ -67,7 +67,7 @@ std::map<std::string, std::string> Web_server::read_config() {
     std::string line;
     std::map<std::string, std::string> m;
 
-    std::ifstream in(config_path); //// окрываем файл для чтения
+    std::ifstream in(config_path); // окрываем файл для чтения
     if (in.is_open()) {
         while (getline(in, line)) {
             std::string key, val;

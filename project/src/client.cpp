@@ -5,6 +5,8 @@
 #include "boost/bind.hpp"
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/http.hpp>
+#include <fstream>
+#include <strstream>
 
 void Client::read() {
     try {
@@ -64,18 +66,7 @@ void Client::handle_read(const boost::system::error_code &e,
     }*/
     response_stream << code_answer
                     << "Content-Length: 500\r\n\r\n"
-                    << "<!DOCTYPE html>\n"
-                    << "<html lang=\"en\">\n"
-                    << "<head>\n"
-                    << "<meta charset=\"UTF-8\">\n"
-                    << "<title>Title</title>\n"
-                    << "</head>\n"
-                    << "<body>\n"
-                    << "<h3>"
-                    << "Hello world" //answer_from_user_server
-                    << "</h3>"
-                    << "</body>\n"
-                    << "</html>";
+                    << parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html");
 
     int k = 0;
     k = snprintf(m_SendBuf + k, sizeof(m_SendBuf) - k,
@@ -88,4 +79,16 @@ void Client::handle_read(const boost::system::error_code &e,
                 // После того, как запишем ответ, можно снова читать
                 self->read();
             });
+}
+
+std::string Client::parse_html(std::string html_way) {
+
+    std::string line;
+    std::stringstream buffer;
+    std::ifstream in(html_way); //// окрываем файл для чтения
+    if (in.is_open()) {
+        buffer << in.rdbuf();
+    }
+    in.close();
+    return buffer.str();
 }
