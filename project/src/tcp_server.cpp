@@ -6,15 +6,15 @@
 
 #include "tcp_server.h"
 
-std::string TcpServer::handle_request(const std::string &request) {
+std::string TcpServer::handle_request(const std::string &request) const {
     return request;
 }
 
 TcpServer::TcpServer(unsigned short port) :
-    acceptor_(service_, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+    acceptor_(service_),
     port_(port) {}
 
-std::string TcpServer::to_string(boost::asio::streambuf &buf) {
+std::string TcpServer::to_string(boost::asio::streambuf &buf) const {
     std::ostringstream tmp;
     tmp << &buf;
     std::string str = tmp.str();
@@ -24,17 +24,21 @@ std::string TcpServer::to_string(boost::asio::streambuf &buf) {
 }
 
 void TcpServer::start_server() {
+    boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::make_address(HOST), port_);
+    acceptor_.open(endpoint.protocol());
+    acceptor_.bind(endpoint);
+    acceptor_.listen(MAX_PENDING_CONNECTIONS);
     std::cout << "Start server on: " << this->acceptor_.local_endpoint().address() << std::endl;
     std::cout << "Listen on port: " << this->port_ << std::endl;
 
     while (true) {
         boost::asio::ip::tcp::socket sock(this->service_);
         this->acceptor_.accept(sock);
-        std::thread(&TcpServer::on_accept, this, std::move(sock)).detach();
+        on_accept(std::move(sock));
     }
 }
 
-void TcpServer::on_accept(boost::asio::ip::tcp::socket sock) {
+void TcpServer::on_accept(boost::asio::ip::tcp::socket sock) const {
     std::cout << "+client from: "
               << sock.remote_endpoint().address().to_string()
               << ':'
