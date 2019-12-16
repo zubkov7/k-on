@@ -26,6 +26,7 @@ std::string TcpServer::to_string(boost::asio::streambuf &buf) const {
 void TcpServer::start_server() {
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::make_address(HOST), port_);
     acceptor_.open(endpoint.protocol());
+    acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
     acceptor_.bind(endpoint);
     acceptor_.listen(MAX_PENDING_CONNECTIONS);
     std::cout << "Start server on: " << this->acceptor_.local_endpoint().address() << std::endl;
