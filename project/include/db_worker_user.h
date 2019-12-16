@@ -11,19 +11,15 @@ class DbWorkerUser {
 public:
     DbWorkerUser();
     ~DbWorkerUser();
-    user get_user(int id);
-    bool login(const std::string &login, const std::string &pass);
-    bool register_user(const std::string &login, const std::string &pass);
-    int increment_listening(int song_id, int user_id);
-    bool like_song(int song_id, int user_id, bool value);
-    int get_listening(int song_id, int user_id);
-    bool get_like_song(int song_id, int user_id);
+    bool login(const std::string &login, const std::string &pass) const;
+    bool sign_up(const std::string &login, const std::string &pass) const;
+    int increment_listening(int song_id, int user_id) const;
+    bool like_song(int song_id, int user_id, bool value) const;
+    bool is_user_exists(int user_id) const;
+    bool is_song_exists(int song_id) const;
 
 private:
     DbWrapper db_wrapper_;
-
-private:
-    bool is_login_available(const std::string &login);
 };
 
 
