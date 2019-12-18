@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 
-#include "db_entities.h"
 #include "db_wrapper.h"
 
 class DbWorkerUser {
