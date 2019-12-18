@@ -18,7 +18,7 @@ bool DbWorkerUser::login(const std::string &login, const std::string &pass) cons
     return result->getInt(1) != 0;
 }
 
-bool DbWorkerUser::sign_up(const std::string &login, const std::string &pass) const {
+bool DbWorkerUser::signup(const std::string &login, const std::string &pass) const {
     try {
         std::stringstream query;
         query << "insert into user (login, password) values ('"

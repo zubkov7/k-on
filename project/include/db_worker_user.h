@@ -12,7 +12,7 @@ public:
     DbWorkerUser();
     ~DbWorkerUser();
     bool login(const std::string &login, const std::string &pass) const;
-    bool sign_up(const std::string &login, const std::string &pass) const;
+    bool signup(const std::string &login, const std::string &pass) const;
     int increment_listening(int song_id, int user_id) const;
     bool like_song(int song_id, int user_id, bool value) const;
     bool is_user_exists(int user_id) const;
