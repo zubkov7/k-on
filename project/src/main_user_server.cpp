@@ -1,10 +1,19 @@
 #include "tcp_server_user.h"
 
-#define PORT 7777
-
 int main(int argc, char *argv[]) {
+    if (argc <= 1) {
+        std::cout << "Please, use user_server port_number\n";
+        return 1;
+    }
+
+    int port = atoi(argv[1]);
+    if (port < 1024 || port > 65535) {
+        std::cout << "Port number must be a number from 1024 to 65535!\n";
+        return 1;
+    }
+
     try {
-        TcpServerUser server(PORT);
+        TcpServerUser server(port);
         server.start_server();
     }
     catch (boost::system::system_error const &e) {
@@ -17,6 +26,4 @@ int main(int argc, char *argv[]) {
     catch (std::exception& e) {
         std::cerr << "Exception in thread: " << e.what() << "\n";
     }
-
-    return 0;
 }
