@@ -35,23 +35,11 @@ void TcpClient::close_connection() {
     }
 }
 
-void TcpClient::connect(char *host, char *port) {
+void TcpClient::connect(const char *host, const char *port) {
     this->host_ = std::string(host);
     this->port_ = boost::lexical_cast<unsigned short>(port);
 
-    try {
-        boost::asio::connect(this->socket_, this->resolver_.resolve({host, port}));
-    }
-    catch (boost::system::system_error const &e) {
-        if (e.code() == boost::asio::error::connection_refused) {
-            std::cout << "Unable to connect to server " << host << ":" << port << std::endl;
-        } else {
-            boost::throw_exception(e);
-        }
-    }
-    catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
-    }
+    boost::asio::connect(this->socket_, resolver_.resolve({host, port}));
 }
 
 void TcpClient::write(const std::string &message) {
@@ -88,6 +76,7 @@ std::string TcpClient::read() {
     }
 
     std::string received_data_str = this->to_string(input_buffer_);
+    input_buffer_.consume(input_buffer_.size());  // Очистка буффера
     return received_data_str;
 }
 

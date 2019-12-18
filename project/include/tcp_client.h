@@ -15,7 +15,7 @@ class TcpClient {
 public:
     TcpClient();
     ~TcpClient();
-    void connect(char *host, char *port);
+    void connect(const char *host, const char *port);
     void write(const std::string &message);
     std::string read();
     void close_connection();
