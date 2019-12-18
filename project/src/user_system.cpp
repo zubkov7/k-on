@@ -1,4 +1,6 @@
 #include <sstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 #include "user_system.h"
 
@@ -6,15 +8,21 @@ UserSystem::UserSystem() {}
 
 std::string UserSystem::login(const std::string &login, const std::string &pass) const {
     bool status = db_worker_.login(login, pass);
+    boost::property_tree::ptree root;
     if (status) {
-        return "User is logged in";
+        root.put("status", "200");
+        root.put("message", "User is logged in");
     } else {
-        return "Invalid login or password";
+        root.put("status", "401");
+        root.put("message", "Invalid login or password");
     }
+    std::stringstream answer;
+    boost::property_tree::write_json(answer, root);
+    return answer.str();
 }
 
-std::string UserSystem::register_user(const std::string &login, const std::string &pass) const {
-    bool status = db_worker_.sign_up(login, pass);
+std::string UserSystem::signup(const std::string &login, const std::string &pass) const {
+    bool status = db_worker_.signup(login, pass);
     if (status) {
         return "User is registered";
     } else {

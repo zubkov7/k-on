@@ -4,14 +4,13 @@
 #include <string>
 
 #include "db_worker_user.h"
-#include "db_entities.h"
 
 class UserSystem {
 public:
     UserSystem();
 
     std::string login(const std::string &login, const std::string &pass) const;
-    std::string register_user(const std::string &login, const std::string &pass) const;
+    std::string signup(const std::string &login, const std::string &pass) const;
     std::string increment_listening(int song_id, int user_id) const;
     std::string like_song(int song_id, int user_id, bool value) const;
 
