@@ -73,10 +73,12 @@ std::string TcpClient::read() {
 
     if (ec == boost::asio::error::eof) {
         std::cout << "Connection closed by server\n";
+        close_connection();
     }
 
     std::string received_data_str = this->to_string(input_buffer_);
     input_buffer_.consume(input_buffer_.size());  // Очистка буффера
+    close_connection();
     return received_data_str;
 }
 
