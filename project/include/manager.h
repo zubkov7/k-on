@@ -6,29 +6,33 @@
 #define K_ON_MANAGER_H
 
 #include <string>
-#include <vector>
 
-#include "user.h"
-#include "db_entities.h"
+#include "tcp_client.h"
+#include "url_parser.h"
 
-class Manager(TcpClient) {
+#define USER_HOST "0.0.0.0"
+#define USER_PORT "7777"
+#define RECOMMENDATION_HOST "0.0.0.0"
+#define RECOMMENDATION_PORT "8888"
+
+class Manager : public TcpClient {
 public:
-    Manager();
-    ~Manager();
-    std::string handle_request(const std::string &request);
+    Manager() {}
+    ~Manager() {}
+    std::string handle_request(const std::string &request, const std::string &session);
 
 private:
-    std::string on_user(const std::string &request);
-    std::string on_recommendation(const std::string &request);
-    user on_get_user(const int id);
-    bool on_login(const std::string &login, const std::string &pass);
-    bool on_register(const std::string &login, const std::string &pass);
-    int on_inc_listening(const int song_id, const int user_id);
-    bool on_like_song(const int song_id, const int user_id, const bool value);
-    std::vector<Recommendations> on_get_recommendations(const int user_id);
-    std::vector<Song> on_get_popular_songs(const int count);
-    std::vector<Recommendations> on_update_recommendations(const int user_id);
+    std::string on_auth(const UrlParser &url_parser, const std::string &method);
+    std::string on_logout(const std::string &session);
+    std::string on_listen(const UrlParser &url_parser, const std::string &session);
+    std::string on_like(const UrlParser &url_parser, const std::string &session);
+    std::string on_index(const std::string &session);
+    std::string on_top();
+    std::string on_recent();
+    std::string on_similar_song(const UrlParser &url_parser);
+    std::string on_update(const std::string &session);
+    std::string on_fail(int code, const std::string &message);
 };
 
 
-#endif //K_ON_MANAGER_H
+#endif  // K_ON_MANAGER_H
