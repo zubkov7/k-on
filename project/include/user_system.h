@@ -13,6 +13,9 @@ public:
     std::string signup(const std::string &login, const std::string &pass) const;
     std::string increment_listening(int song_id, int user_id) const;
     std::string like_song(int song_id, int user_id, bool value) const;
+    std::string logout(const std::string &session) const;
+    std::string get_login(const std::string &session) const;
+    int get_user_id(const std::string &session, bool &status) const;
 
 private:
     DbWorkerUser db_worker_;
