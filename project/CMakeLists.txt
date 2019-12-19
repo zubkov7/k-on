@@ -7,6 +7,7 @@ set(CMAKE_CXX_FLAGS "-std=c++0x")
 
 find_package (Threads REQUIRED)
 find_package(Boost 1.71.0 REQUIRED)
+find_package(OpenSSL REQUIRED)
 find_library(CONCPP_LIB NAMES mysqlcppconn PATHS "${CONCPP_LIB_DIR}" REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS})
@@ -19,10 +20,11 @@ set(USER_SERVER_SRC
         src/user_system.cpp
         src/db_worker_user.cpp
         src/db_wrapper.cpp
-        src/json.cpp)
+        src/json.cpp
+        src/utils.cpp)
 
 add_executable(user_server ${USER_SERVER_SRC})
-target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CONCPP_LIB})
+target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CONCPP_LIB} OpenSSL::Crypto)
 
 add_executable(recommendation_server ./src/main_recommendation_server.cpp)
 target_link_libraries(recommendation_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
