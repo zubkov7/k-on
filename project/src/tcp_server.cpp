@@ -66,14 +66,12 @@ void TcpServer::on_accept(boost::asio::ip::tcp::socket sock) const {
         sock.close();
     }
     catch (boost::system::system_error const &e) {
+        std::cout << e.what() << std::endl;
         if (e.code() == boost::asio::error::eof) {  // Клиент закрыл соединение
             std::cout << "-client: Connection closed by peer\n";
             sock.close();
         } else {
             boost::throw_exception(e);
         }
-    }
-    catch (std::exception& e) {
-        std::cerr << "Exception in thread: " << e.what() << "\n";
     }
 }
