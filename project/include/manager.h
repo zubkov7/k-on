@@ -26,12 +26,10 @@ private:
     std::string on_logout(const std::string &session);
     std::string on_listen(const UrlParser &url_parser, const std::string &session);
     std::string on_like(const UrlParser &url_parser, const std::string &session);
-    std::string on_index(const std::string &session);
+    std::string on_index_or_update(const std::string &session, const std::string &method);
     std::string on_top();
     std::string on_recent();
     std::string on_similar_song(const UrlParser &url_parser);
-    std::string on_update(const std::string &session);
-    std::string on_fail(int code, const std::string &message);
 };
 
 

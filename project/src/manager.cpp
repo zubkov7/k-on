@@ -4,9 +4,11 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <iostream>
 
 #include "manager.h"
 #include "url_parser.h"
+#include "json.h"
 
 std::string Manager::handle_request(const std::string &request, const std::string &session) {
     UrlParser url_parser;
@@ -30,7 +32,7 @@ std::string Manager::handle_request(const std::string &request, const std::strin
             return on_listen(url_parser, session);
         }
         if (path == "/index") {
-            return on_index(session);
+            return on_index_or_update(session, "get_recommendations");
         }
         if (path == "/top") {
             return on_top();
@@ -42,10 +44,7 @@ std::string Manager::handle_request(const std::string &request, const std::strin
             return on_similar_song(url_parser);
         }
         if (path == "/update") {
-            return on_update(session);
-        }
-        if (path == "/") {
-            return "flavicon";
+            return on_index_or_update(session, "update_recommendations");
         }
 
         return on_fail(400, "bad request");
@@ -57,7 +56,14 @@ std::string Manager::handle_request(const std::string &request, const std::strin
             boost::throw_exception(e);
         }
     }
-
+    catch (boost::property_tree::ptree_bad_path const &e) {
+        std::cout << e.what() << std::endl;
+        return on_fail(500, "Internal server error");
+    }
+    catch (boost::property_tree::json_parser_error const &e) {
+        std::cout << e.what() << std::endl;
+        return on_fail(500, "Internal server error");
+    }
 }
 
 std::string Manager::on_auth(const UrlParser &url_parser, const std::string &method) {
@@ -70,12 +76,35 @@ std::string Manager::on_auth(const UrlParser &url_parser, const std::string &met
         root.put("login", login);
         root.put("password", password);
 
-        std::stringstream request;
-        boost::property_tree::write_json(request, root);
-
         connect(USER_HOST, USER_PORT);
-        write(request.str());
-        return read();
+        write(stringify_json(root));  // Отправляем запрос на логин или регистрацию
+
+        std::string answer = read();  // Читаем ответ
+
+        root = parse_to_json(answer);
+
+        if (root.get<std::string>("status") == "401") {  // Логин или регистрация не прошла
+            return answer;
+        } else {  // Логин или регистрация прошла успешно
+            std::string session = root.get<std::string>("session");  // Сохраняем сессию пользователя
+
+            root.clear();
+            root.put("method", "update_recommendations");
+            root.put("login", login);
+
+            connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
+            write(stringify_json(root));  // Отправлем запрос на обновление рекоммендаций пользователя
+
+            answer = read();
+
+            root = parse_to_json(answer);
+            root.put("session", session);
+            root.put("page", "index");
+            root.put("status", "303");
+            root.put("login", login);
+
+            return stringify_json(root);
+        }
     } else {
         return on_fail(400, "bad request, please add get parameters: login and password");
     }
@@ -86,12 +115,16 @@ std::string Manager::on_logout(const std::string &session) {
     root.put("method", "logout");
     root.put("session", session);
 
-    std::stringstream request;
-    boost::property_tree::write_json(request, root);
-
     connect(USER_HOST, USER_PORT);
-    write(request.str());
-    return read();
+    write(stringify_json(root));
+
+    std::string answer = read();
+
+    root = parse_to_json(answer);
+    root.put("status", "303");
+    root.put("page", "login");
+
+    return stringify_json(root);
 }
 
 std::string Manager::on_listen(const UrlParser &url_parser, const std::string &session) {
@@ -103,11 +136,8 @@ std::string Manager::on_listen(const UrlParser &url_parser, const std::string &s
         root.put("song_id", song_id);
         root.put("session", session);
 
-        std::stringstream request;
-        boost::property_tree::write_json(request, root);
-
         connect(USER_HOST, USER_PORT);
-        write(request.str());
+        write(stringify_json(root));
         return read();
     } else {
         return on_fail(400, "bad request, please add get parameter: song_id");
@@ -120,36 +150,62 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
         std::string like = url_parser.get_parameter("like");
 
         boost::property_tree::ptree root;
-        root.put("method", "listen");
+        root.put("method", "like");
         root.put("song_id", song_id);
         root.put("like", like);
         root.put("session", session);
 
-        std::stringstream request;
-        boost::property_tree::write_json(request, root);
-
         connect(USER_HOST, USER_PORT);
-        write(request.str());
+        write(stringify_json(root));
         return read();
     } else {
         return on_fail(400, "bad request, please add get parameter: song_id and like");
     }
 }
 
-std::string Manager::on_index(const std::string &session) {
-    //TODO() : реализовать метод
-    return "On index";
+std::string Manager::on_index_or_update(const std::string &session, const std::string &method) {
+    boost::property_tree::ptree root;
+    root.put("method", "get_login");
+    root.put("session", session);
+
+    connect(USER_HOST, USER_PORT);
+    write(stringify_json(root));  // Отправляем запрос на получение логина
+
+    std::string answer = read();  // Читаем ответ
+
+    root = parse_to_json(answer);
+
+    if (root.get<std::string>("status") == "403") {  // Сессия неверная
+        root.put("page", "login");
+        return stringify_json(root);
+    } else {  // Получение лоигина прошло успешно
+        std::string login = root.get<std::string>("login");  // Сохраняем логин пользователя
+
+        root.clear();
+        root.put("method", method);
+        root.put("login", login);
+
+        connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
+        write(stringify_json(root));  // Отправлем запрос на обновление рекоммендаций пользователя
+
+        answer = read();
+
+        root = parse_to_json(answer);
+        root.put("session", session);
+        root.put("login", login);
+        root.put("page", "index");
+        root.put("status", "200");
+
+        return stringify_json(root);
+    }
 }
 
 std::string Manager::on_top() {
     boost::property_tree::ptree root;
     root.put("method", "get_popular");
 
-    std::stringstream request;
-    boost::property_tree::write_json(request, root);
-
     connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
-    write(request.str());
+    write(stringify_json(root));
     return read();
 }
 
@@ -157,11 +213,8 @@ std::string Manager::on_recent() {
     boost::property_tree::ptree root;
     root.put("method", "get_new");
 
-    std::stringstream request;
-    boost::property_tree::write_json(request, root);
-
     connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
-    write(request.str());
+    write(stringify_json(root));
     return read();
 }
 
@@ -173,29 +226,10 @@ std::string Manager::on_similar_song(const UrlParser &url_parser) {
         root.put("method", "get_similar");
         root.put("song_id", song_id);
 
-        std::stringstream request;
-        boost::property_tree::write_json(request, root);
-
         connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
-        write(request.str());
+        write(stringify_json(root));
         return read();
     } else {
         return on_fail(400, "bad request, please add get parameter: song_id");
     }
-}
-
-std::string Manager::on_update(const std::string &session) {
-    // TODO() : реализовать метод
-    return "On update";
-}
-
-std::string Manager::on_fail(int code, const std::string &message) {
-    boost::property_tree::ptree root;
-    root.put("status", code);
-    root.put("message", message);
-
-    std::stringstream answer;
-    boost::property_tree::write_json(answer, root);
-
-    return answer.str();
 }
