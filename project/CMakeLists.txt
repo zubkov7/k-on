@@ -18,7 +18,8 @@ set(USER_SERVER_SRC
         src/tcp_server_user.cpp
         src/user_system.cpp
         src/db_worker_user.cpp
-        src/db_wrapper.cpp)
+        src/db_wrapper.cpp
+        src/json.cpp)
 
 add_executable(user_server ${USER_SERVER_SRC})
 target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CONCPP_LIB})
@@ -32,7 +33,8 @@ set(WEB_SERVER_SRC
         src/web_server.cpp
         src/tcp_client.cpp
         src/manager.cpp
-        src/url_parser.cpp)
+        src/url_parser.cpp
+        src/json.cpp)
 
 add_executable(web_server ${WEB_SERVER_SRC})
 target_link_libraries(web_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
