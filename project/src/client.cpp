@@ -49,7 +49,7 @@ void Client::handle_read(const boost::system::error_code &e,
     memset(m_Buf,'\0',1024);
     //std::string str = p.release().at("Cookie").to_string();
     //std::cerr<<str.substr(str.find("sessionid"))<<std::endl;
-    //std::cerr<<p.release().target().to_string()<<std::endl;
+    std::cerr<<p.release().target().to_string()<<std::endl;
 
     boost::property_tree::ptree response;
     std::stringstream answer_from_user_server;
@@ -69,7 +69,6 @@ void Client::handle_read(const boost::system::error_code &e,
     std::string code_answer = "HTTP/1.1 200 OK\r\n";
     std::string set_cook;
     std::string user_info = "OLEG";
-    std::string data_info = "SONG123\n";
     /*if (answer_from_user_server == "Wrong request")
     {
         code_answer= "HTTP/1.1 400 Bad Request\r\n";
@@ -84,18 +83,24 @@ void Client::handle_read(const boost::system::error_code &e,
      {
         set_cook = "Set-Cookie: sessionid=" + response.get()_child("session"); ""
      }
-     user_info = response.get_child("user")
-     data_info = response.get_child("user")
+     user_info = response.get_child("user")*/
+    response.add("1","song1");
+    response.add("2","song2");
+    response.add("3","song3");
+     //auto& data_info = response.get_child("user");
      std::string str;
-     for (auto it:data_info)
+     for (auto it:response)
      {
-        str = str + "+"<a href='" + it.get_children("id")+"'>"+it.get_children("name")+
-        it.get_children("duration")+"</a> <a href='"+it.get_children("id")+"'> Like </a> \n ";
+         //std::cerr<<it.first.c_str() <<"  "<< it.second.data().c_str()<<std::endl;
+        str = str + "<div><a href='/song/" + it.first+"'>"+it.second.data().c_str()+
+                +"</a> <a href=/like?song_id="
+                +it.first+"> Like </a> <a href=/listen?song_id="
+                +it.first + "> Listen </a> </div> \n ";
+        //it.get_children("duration")+"</a> <a href='"+it.get_children("id")+"'> Like </a> \n ";
      }
-     */
-    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
-            user_info,data_info+
-                   "SONGA2\n");
+    //std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
+     //       user_info,str);
+    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/form.html","login","");
     response_stream << code_answer
                     << "Content-Length:"<< html.size() <<"\r\n\r\n"
                     << set_cook
@@ -124,7 +129,17 @@ std::string Client::parse_html(std::string html_way,std::string user_info,std::s
         buffer << in.rdbuf();
     }
     in.close();
-    line = std ::regex_replace(buffer.str(),std::regex("\\$user"),user_info);
-    line = std ::regex_replace(line,std::regex("\\$data"),"<a href='/song/1'>"+data_info+"</a>");
+    if (user_info == "login")
+    {
+        line = std::regex_replace(buffer.str(), std::regex("\\$root"), "login");
+    }
+    else if (user_info == "sign_up")
+    {
+        line = std::regex_replace(buffer.str(), std::regex("\\$root"), "signup");
+
+    } else {
+        line = std::regex_replace(buffer.str(), std::regex("\\$user"), user_info);
+        line = std::regex_replace(line, std::regex("\\$data"), "<a href='/song/1'>" + data_info + "</a>");
+    }
     return line;
 }
