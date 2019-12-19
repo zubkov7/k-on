@@ -17,13 +17,11 @@ int main(int argc, char *argv[]) {
         server.start_server();
     }
     catch (boost::system::system_error const &e) {
+        std::cout << e.what() << std::endl;
         if (e.code() == boost::asio::error::address_in_use) {
             std::cout << "Address already in use\n";
         } else {
             boost::throw_exception(e);
         }
-    }
-    catch (std::exception& e) {
-        std::cerr << "Exception in thread: " << e.what() << "\n";
     }
 }
