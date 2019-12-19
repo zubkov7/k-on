@@ -186,7 +186,7 @@ std::string Manager::on_index_or_update(const std::string &session, const std::s
         root.put("login", login);
 
         connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
-        write(stringify_json(root));  // Отправлем запрос на обновление рекоммендаций пользователя
+        write(stringify_json(root));  // Отправлем запрос на обновление или получение рекоммендаций пользователя
 
         answer = read();
 
