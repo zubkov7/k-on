@@ -1,12 +1,13 @@
 #include <sstream>
 
 #include "db_worker_user.h"
+#include "utils.h"
 
 DbWorkerUser::DbWorkerUser() {}
 
 DbWorkerUser::~DbWorkerUser() {}
 
-bool DbWorkerUser::login(const std::string &login, const std::string &pass) const {
+std::string DbWorkerUser::login(const std::string &login, const std::string &pass, bool &status) const {
     std::stringstream query;
     query << "select Count(id) from user where login = '"
           << login
@@ -15,10 +16,24 @@ bool DbWorkerUser::login(const std::string &login, const std::string &pass) cons
           << "';";
     sql::ResultSet *result = db_wrapper_.execute_query(query.str());
     result->next();
-    return result->getInt(1) != 0;
+    if (result->getInt(1) == 0) {  // Логин неверный
+        status = false;
+        return "";
+    } else {  // Логин верный. Генерируем сессию для пользователя
+        status = true;
+        std::string session = get_hash(login + get_current_time() + pass);
+        query.str("");
+        query << "insert into session (login, session) values ('"
+              << login
+              << "', '"
+              << session
+              << "');";
+        db_wrapper_.execute_query(query.str());
+        return session;
+    }
 }
 
-bool DbWorkerUser::signup(const std::string &login, const std::string &pass) const {
+std::string DbWorkerUser::signup(const std::string &login, const std::string &pass, bool &status) const {
     try {
         std::stringstream query;
         query << "insert into user (login, password) values ('"
@@ -27,10 +42,21 @@ bool DbWorkerUser::signup(const std::string &login, const std::string &pass) con
               << pass
               << "');";
         db_wrapper_.execute(query.str());
-        return true;
+        status = true;
+
+        std::string session = get_hash(login + get_current_time() + pass);
+        query.str("");
+        query << "insert into session (login, session) values ('"
+              << login
+              << "', '"
+              << session
+              << "');";
+        db_wrapper_.execute_query(query.str());
+        return session;
     }
     catch (sql::SQLException &exception) {  // Логин занят
-        return false;
+        status = false;
+        return "";
     }
 
 }
@@ -117,4 +143,56 @@ bool DbWorkerUser::is_user_exists(int user_id) const {
     sql::ResultSet *result = db_wrapper_.execute_query(query.str());
     result->next();
     return result->getInt(1) != 0;
+}
+
+int DbWorkerUser::get_user_id(const std::string &session, bool &status) const {
+    std::stringstream query;
+    query << "select login from session where session ='"
+          << session
+          << "';";
+
+    sql::ResultSet *result = db_wrapper_.execute_query(query.str());
+
+    if (result->rowsCount() == 0) {
+        status = false;
+        return 0;
+    } else {
+        status = true;
+        result->next();
+        std::string login = result->getString(1);
+        query.str("");
+        query << "select id from user where login ='"
+              << login
+              << "';";
+
+        result = db_wrapper_.execute_query(query.str());
+        result->next();
+        return result->getInt(1);
+    }
+}
+
+void DbWorkerUser::logout(const std::string &session) const {
+    std::stringstream query;
+    query << "delete from session where session = '"
+          << session
+          << "';";
+    db_wrapper_.execute(query.str());
+}
+
+std::string DbWorkerUser::get_login(const std::string session, bool &status) const {
+    std::stringstream query;
+    query << "select login from session where session ='"
+          << session
+          << "';";
+
+    sql::ResultSet *result = db_wrapper_.execute_query(query.str());
+
+    if (result->rowsCount() == 0) {
+        status = false;
+        return "";
+    } else {
+        status = true;
+        result->next();
+        return result->getString(1);
+    }
 }
