@@ -7,6 +7,9 @@
 #include <boost/beast/http.hpp>
 #include <fstream>
 #include <strstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <regex>
 
 void Client::read() {
     try {
@@ -44,12 +47,22 @@ void Client::handle_read(const boost::system::error_code &e,
     boost::beast::error_code er;
     p.put(boost::asio::buffer(m_Buf), er);
     memset(m_Buf,'\0',1024);
+    //std::string str = p.release().at("Cookie").to_string();
+    //std::cerr<<str.substr(str.find("sessionid"))<<std::endl;
+    std::cerr<<p.release().target().to_string()<<std::endl;
+
+    boost::property_tree::ptree response;
+    std::stringstream answer_from_user_server;
+
+    boost::property_tree::write_json(answer_from_user_server,response);
+
 
     /*TcpClient tcp_client;
     tcp_client.connect("0.0.0.0", "7777");
     std::string request = p.release().target().to_string();
     tcp_client.write(request);
     std::string answer_from_user_server = tcp_client.read();
+    boost::property_tree::write_json(answer_from_user_server,response);
     tcp_client.close_connection();*/
 
     std::stringstream response_stream;
@@ -64,9 +77,12 @@ void Client::handle_read(const boost::system::error_code &e,
         code_answer= "HTTP/1.1 404 Not Found\r\n";
         answer_from_user_server = "Not Found";
     }*/
+    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
+            "OLEG","SONGA\n"
+                   "SONGA2\n");
     response_stream << code_answer
-                    << "Content-Length: 500\r\n\r\n"
-                    << parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html");
+                    << "Content-Length:"<< html.size() <<"\r\n\r\n"
+                    << html;
 
     int k = 0;
     k = snprintf(m_SendBuf + k, sizeof(m_SendBuf) - k,
@@ -81,14 +97,17 @@ void Client::handle_read(const boost::system::error_code &e,
             });
 }
 
-std::string Client::parse_html(std::string html_way) {
+std::string Client::parse_html(std::string html_way,std::string user_info,std::string data_info) {
 
     std::string line;
     std::stringstream buffer;
+    std::stringstream buffer_check;
     std::ifstream in(html_way); //// окрываем файл для чтения
     if (in.is_open()) {
         buffer << in.rdbuf();
     }
     in.close();
-    return buffer.str();
+    line = std ::regex_replace(buffer.str(),std::regex("\\$user"),user_info);
+    line = std ::regex_replace(line,std::regex("\\$data"),"<a href='/song/1'>"+data_info+"</a>");
+    return line;
 }
