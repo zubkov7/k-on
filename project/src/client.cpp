@@ -49,7 +49,7 @@ void Client::handle_read(const boost::system::error_code &e,
     memset(m_Buf,'\0',1024);
     //std::string str = p.release().at("Cookie").to_string();
     //std::cerr<<str.substr(str.find("sessionid"))<<std::endl;
-    std::cerr<<p.release().target().to_string()<<std::endl;
+    //std::cerr<<p.release().target().to_string()<<std::endl;
 
     boost::property_tree::ptree response;
     std::stringstream answer_from_user_server;
@@ -60,14 +60,16 @@ void Client::handle_read(const boost::system::error_code &e,
     /*TcpClient tcp_client;
     tcp_client.connect("0.0.0.0", "7777");
     std::string request = p.release().target().to_string();
-    tcp_client.write(request);
+    tcp_client.write(request,str.substr(str.find("sessionid")));
     std::string answer_from_user_server = tcp_client.read();
     boost::property_tree::write_json(answer_from_user_server,response);
     tcp_client.close_connection();*/
 
     std::stringstream response_stream;
     std::string code_answer = "HTTP/1.1 200 OK\r\n";
-    std::string set_cook = "";
+    std::string set_cook;
+    std::string user_info = "OLEG";
+    std::string data_info = "SONG123\n";
     /*if (answer_from_user_server == "Wrong request")
     {
         code_answer= "HTTP/1.1 400 Bad Request\r\n";
@@ -78,16 +80,25 @@ void Client::handle_read(const boost::system::error_code &e,
         code_answer= "HTTP/1.1 404 Not Found\r\n";
         answer_from_user_server = "Not Found";
     }
-     if response.get()_child("sessionid") != ""
+     if response.get()_child("session") != ""
      {
-        set_cook = "Set-Cookie: sessionid=" + response.get()_child("sessionid"); ""
-     }*/
+        set_cook = "Set-Cookie: sessionid=" + response.get()_child("session"); ""
+     }
+     user_info = response.get_child("user")
+     data_info = response.get_child("user")
+     std::string str;
+     for (auto it:data_info)
+     {
+        str = str + "+"<a href='" + it.get_children("id")+"'>"+it.get_children("name")+
+        it.get_children("duration")+"</a> <a href='"+it.get_children("id")+"'> Like </a> \n ";
+     }
+     */
     std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
-            "OLEG","SONGA\n"
+            user_info,data_info+
                    "SONGA2\n");
     response_stream << code_answer
                     << "Content-Length:"<< html.size() <<"\r\n\r\n"
-                    << set_cook;
+                    << set_cook
                     << html;
 
     int k = 0;
