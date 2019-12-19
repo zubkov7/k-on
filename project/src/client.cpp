@@ -67,6 +67,7 @@ void Client::handle_read(const boost::system::error_code &e,
 
     std::stringstream response_stream;
     std::string code_answer = "HTTP/1.1 200 OK\r\n";
+    std::string set_cook = "";
     /*if (answer_from_user_server == "Wrong request")
     {
         code_answer= "HTTP/1.1 400 Bad Request\r\n";
@@ -76,12 +77,17 @@ void Client::handle_read(const boost::system::error_code &e,
     {
         code_answer= "HTTP/1.1 404 Not Found\r\n";
         answer_from_user_server = "Not Found";
-    }*/
+    }
+     if response.get()_child("sessionid") != ""
+     {
+        set_cook = "Set-Cookie: sessionid=" + response.get()_child("sessionid"); ""
+     }*/
     std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
             "OLEG","SONGA\n"
                    "SONGA2\n");
     response_stream << code_answer
                     << "Content-Length:"<< html.size() <<"\r\n\r\n"
+                    << set_cook;
                     << html;
 
     int k = 0;
