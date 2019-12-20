@@ -165,7 +165,7 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
 
 std::string Manager::on_index_or_update(const std::string &session, const std::string &method) {
     boost::property_tree::ptree root;
-    root.put("method", "get_login");
+    root.put("method", "get_user_id");
     root.put("session", session);
 
     connect(USER_HOST, USER_PORT);
@@ -175,15 +175,16 @@ std::string Manager::on_index_or_update(const std::string &session, const std::s
 
     root = parse_to_json(answer);
 
-    if (root.get<std::string>("status") == "403") {  // Сессия неверная
+    if (root.get<std::string>("status") == "401") {  // Сессия неверная
         root.put("page", "login");
         return stringify_json(root);
     } else {  // Получение лоигина прошло успешно
         std::string login = root.get<std::string>("login");  // Сохраняем логин пользователя
+        int user_id = root.get<int>("user_id");  // Сохраняем id пользователя
 
         root.clear();
         root.put("method", method);
-        root.put("login", login);
+        root.put("user_id", user_id);
 
         connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
         write(stringify_json(root));  // Отправлем запрос на обновление или получение рекоммендаций пользователя
