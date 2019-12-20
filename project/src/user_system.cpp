@@ -96,8 +96,7 @@ std::string UserSystem::get_login(const std::string &session) const {
     std::string login = db_worker_.get_login(session, status);
     boost::property_tree::ptree root;
     if (status) {
-        root.put("status", "200");
-        root.put("login", login);
+        return login;
     } else {
         root.put("status", "403");
         root.put("message", "Redirect to login page");
