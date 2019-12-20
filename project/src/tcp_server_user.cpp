@@ -30,8 +30,8 @@ std::string TcpServerUser::handle_request(const std::string &request) const {
         if (method == "logout") {
             return on_logout(root);
         }
-        if (method == "get_login") {
-            return on_get_login(root);
+        if (method == "get_user_id") {
+            return on_get_user_id(root);
         }
 
         return on_fail(500, "Internal server error: request to the wrong method");
@@ -92,7 +92,19 @@ std::string TcpServerUser::on_logout(const boost::property_tree::ptree &root) co
     return user_system_.logout(session);
 }
 
-std::string TcpServerUser::on_get_login(const boost::property_tree::ptree &root) const {
+std::string TcpServerUser::on_get_user_id(const boost::property_tree::ptree &root) const {
     std::string session = root.get<std::string>("session");
-    return user_system_.get_login(session);
+
+    bool status;
+    int user_id = user_system_.get_user_id(session, status);
+
+    if (status) {
+        boost::property_tree::ptree answer;
+        answer.put("login", user_system_.get_login(session));
+        answer.put("status", "200");
+        answer.put("user_id", user_id);
+        return stringify_json(answer);
+    } else {
+        return on_fail(401, "Unauthorized");
+    }
 }
