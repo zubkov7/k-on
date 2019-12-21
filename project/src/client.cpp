@@ -46,21 +46,30 @@ void Client::handle_read(const boost::system::error_code &e,
 
     boost::beast::http::request_parser<boost::beast::http::string_body> p;
     boost::beast::error_code er;
-    p.put(boost::asio::buffer(m_Buf), er);
+    std::string str_buf(m_Buf);
+    p.put(boost::asio::buffer(str_buf), er);
 
-    memset(m_Buf,'\0',1024);
+    std::cout << m_Buf << std::endl;
+
 
     std::string url = p.release().target().to_string();  // url
+    boost::beast::http::request_parser<boost::beast::http::string_body> p_tmp;
+    p_tmp.put(boost::asio::buffer(str_buf), er);
     std::string tmp_session;
     std::string session;  // сессия
 
+    memset(m_Buf,'\0',1024);
     try {
-        std::string tmp_session = p.release().at("Cookie").to_string();
-        std::string session = tmp_session.substr(tmp_session.find("sessionid"));  // сессия
+        tmp_session = p_tmp.release().at("Cookie").to_string();
+        std::cout << "tmp session: " << tmp_session << std::endl;
+        session = tmp_session.substr(tmp_session.find("=") + 1);  // сессия
     }
     catch (std::out_of_range &e) {
+        std::cout << e.what() << std::endl;
         session = "";
     }
+
+    std::cout << "session: " << session << std::endl;
 
 
     Manager manager;
@@ -145,7 +154,6 @@ void Client::handle_read(const boost::system::error_code &e,
                         << html;
     }
 
-    std::cout << response_stream.str() << std::endl;
 
     int k = 0;
     k = snprintf(m_SendBuf + k, sizeof(m_SendBuf) - k,

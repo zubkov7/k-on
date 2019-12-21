@@ -11,6 +11,6 @@
 TcpServerRecommendation::TcpServerRecommendation(unsigned short port) : TcpServer(port) {}
 
 std::string TcpServerRecommendation::handle_request(const std::string &request) const {
-    return on_fail(200, "Answer from recommendation server");git
+    return on_fail(200, "Answer from recommendation server");
 }
 
