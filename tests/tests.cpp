@@ -143,23 +143,6 @@ TEST(DbWorkerRecommendations, change_likes_dislikes) {
     EXPECT_EQ(expected_likes_dislikes, got_likes_dislikes);
 }
 
-TEST(DbWorkerRecommendations, get_user_likes_dislikes) {
-    DbWorkerRecommendations worker("test", "localhost", "root", "");
-    const int user_id = 2;
-    const int size = 4;
-
-    std::vector<LikeDislike> got_likes_dislikes = worker.get_likes_dislikes(user_id);
-    EXPECT_EQ(size, got_likes_dislikes.size());
-
-    std::vector<LikeDislike> expected_likes_dislikes = {
-            LikeDislike(1, 2, 1, false),
-            LikeDislike(4, 2, 2, true),
-            LikeDislike(8, 2, 4, true),
-            LikeDislike(12, 2, 7, true)            
-    };
-    EXPECT_EQ(expected_likes_dislikes, got_likes_dislikes);
-}
-
 TEST(DbWorkerRecommendations, add_listens) {
     DbWorkerRecommendations worker("test", "localhost", "root", "");
     
@@ -186,23 +169,6 @@ TEST(DbWorkerRecommendations, add_listens) {
     }
 
     std::vector<Listen> got_listens = worker.get_listens();
-    EXPECT_EQ(expected_listens, got_listens);
-}
-
-TEST(DbWorkerRecommendations, get_user_listens) {
-    DbWorkerRecommendations worker("test", "localhost", "root", "");
-    const int user_id = 2;
-    const int size = 4;
-
-    std::vector<Listen> got_listens = worker.get_listens(user_id);
-    EXPECT_EQ(size, got_listens.size());
-
-    std::vector<Listen> expected_listens = {
-            Listen(1, 2, 1, 1),
-            Listen(4, 2, 2, 7),
-            Listen(8, 2, 4, 28),
-            Listen(12, 2, 7, 10)
-    };
     EXPECT_EQ(expected_listens, got_listens);
 }
 
