@@ -1,14 +1,16 @@
-//
-// Created by andrey on 07.12.2019.
-//
 #include <iostream>
-
-#include "client.h"
-#include "tcp_client.h"
-#include "manager.h"
-#include "boost/bind.hpp"
+#include <boost/bind.hpp>
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/http.hpp>
+#include <fstream>
+#include <strstream>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <regex>
+
+#include "manager.h"
+#include "client.h"
+#include "json.h"
 
 void Client::read() {
     try {
@@ -45,31 +47,109 @@ void Client::handle_read(const boost::system::error_code &e,
     boost::beast::http::request_parser<boost::beast::http::string_body> p;
     boost::beast::error_code er;
     p.put(boost::asio::buffer(m_Buf), er);
-    memset(m_Buf, '\0', 1024);
-    std::stringstream response_stream;
-    std::string request = p.release().target().to_string();
+
+    memset(m_Buf,'\0',1024);
+
+    std::string url = p.release().target().to_string();  // url
+    std::string tmp_session;
+    std::string session;  // сессия
+
+    try {
+        std::string tmp_session = p.release().at("Cookie").to_string();
+        std::string session = tmp_session.substr(tmp_session.find("sessionid"));  // сессия
+    }
+    catch (std::out_of_range &e) {
+        session = "";
+    }
+
 
     Manager manager;
-    std::string answer_from_user_server = manager.handle_request(request, "516234bd2cb5a395e13958734e03ad3311c1693440c1ba997bcc945b434bf6");
+    std::string answer_from_manager = manager.handle_request(url, session);
 
-    response_stream << "HTTP/1.1 200 OK\r\n"
-                    << "Content-Length: 500\r\n\r\n"
-                    << "<!DOCTYPE html>\n"
-                    << "<html lang=\"en\">\n"
-                    << "<head>\n"
-                    << "<meta charset=\"UTF-8\">\n"
-                    << "<title>Title</title>\n"
-                    << "</head>\n"
-                    << "<body>\n"
-                    << "<h3>"
-                    << answer_from_user_server
-                    << "</h3>\n"
-                    << "</body>\n"
-                    << "</html>";
+    boost::property_tree::ptree response = parse_to_json(answer_from_manager);
+
+    int status = response.get<int>("status");
+
+    std::stringstream response_stream;
+
+    if (status == 500) {  // Внутренняя ошибка сервера
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 500 Internal Server Error\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 503) {  // Какой-то из сервисов недоступен
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 503 Service Unavailable\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 400) {  // Неправильный запрос
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 400 Bad Request\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 403) {  // Не залогинен нужно перевести на страницу логина
+        std::string html = parse_html("../form.html", "login", "");
+        response_stream << "HTTP/1.1 403 Forbidden\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 303) {  // Не залогинен нужно перевести на страницу логина
+        std::string html = parse_html("../form.html", "login", "");
+        response_stream << "HTTP/1.1 200 OK\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 401) {  // Неправильный логин или пароль
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 401 Unauthorized\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 200) {  // Вернуть ответ
+        std::string login;
+        if (response.find("login") == response.not_found()) {
+            login = "some login";
+        } else {
+            login = response.get<std::string>("login");
+        }
+
+//        std::string str;
+//        for (auto it : response) {
+//            str = str + "<div><a href='/similarsong?song_id=1" +
+//                  "Song Name</a> <a href=/like?song_id=1&value=1" +
+//                  "Like</a> <a href=/listen?song_id=1>" +
+//                  "Listen </a> </div> \n ";
+//        }
+
+        std::string html = parse_html("../index.html", login, stringify_json(response));
+        response_stream << "HTTP/1.1 200 OK\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\nSet-Cookie: sessionid=";
+
+        if (response.find("session") == response.not_found()) {
+            response_stream << session;
+        } else {
+            response_stream << response.get<std::string>("session");
+        }
+        response_stream << "\r\n\r\n"
+                        << html;
+    }
+
+    std::cout << response_stream.str() << std::endl;
 
     int k = 0;
     k = snprintf(m_SendBuf + k, sizeof(m_SendBuf) - k,
-                  "%s", response_stream.str().c_str());
+                 "%s", response_stream.str().c_str());
 
     m_Sock.async_write_some(
             boost::asio::buffer(m_SendBuf),
@@ -78,4 +158,29 @@ void Client::handle_read(const boost::system::error_code &e,
                 // После того, как запишем ответ, можно снова читать
                 self->read();
             });
+}
+
+std::string Client::parse_html(std::string html_way,std::string user_info,std::string data_info) {
+
+    std::string line;
+    std::stringstream buffer;
+    std::stringstream buffer_check;
+    std::ifstream in(html_way); //// окрываем файл для чтения
+    if (in.is_open()) {
+        buffer << in.rdbuf();
+    }
+    in.close();
+    if (user_info == "login")
+    {
+        line = std::regex_replace(buffer.str(), std::regex("\\$root"), "login");
+    }
+    else if (user_info == "sign_up")
+    {
+        line = std::regex_replace(buffer.str(), std::regex("\\$root"), "signup");
+
+    } else {
+        line = std::regex_replace(buffer.str(), std::regex("\\$user"), user_info);
+        line = std::regex_replace(line, std::regex("\\$data"), "<a href='/song/1'>" + data_info + "</a>");
+    }
+    return line;
 }

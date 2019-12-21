@@ -100,7 +100,7 @@ std::string Manager::on_auth(const UrlParser &url_parser, const std::string &met
             root = parse_to_json(answer);
             root.put("session", session);
             root.put("page", "index");
-            root.put("status", "303");
+            root.put("status", "200");
             root.put("login", login);
 
             return stringify_json(root);
@@ -175,7 +175,7 @@ std::string Manager::on_index_or_update(const std::string &session, const std::s
 
     root = parse_to_json(answer);
 
-    if (root.get<std::string>("status") == "401") {  // Сессия неверная
+    if (root.get<std::string>("status") == "403") {  // Сессия неверная
         root.put("page", "login");
         return stringify_json(root);
     } else {  // Получение лоигина прошло успешно

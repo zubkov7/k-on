@@ -68,7 +68,7 @@ std::string TcpServerUser::on_inc_listening(const boost::property_tree::ptree &r
     if (status) {
         return user_system_.increment_listening(song_id, user_id);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
     }
 }
 
@@ -83,7 +83,7 @@ std::string TcpServerUser::on_like_song(const boost::property_tree::ptree &root)
     if (status) {
         return user_system_.like_song(song_id, user_id, like_value);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
     }
 }
 
@@ -105,6 +105,6 @@ std::string TcpServerUser::on_get_user_id(const boost::property_tree::ptree &roo
         answer.put("user_id", user_id);
         return stringify_json(answer);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
     }
 }

@@ -26,7 +26,14 @@ set(USER_SERVER_SRC
 add_executable(user_server ${USER_SERVER_SRC})
 target_link_libraries(user_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} ${CONCPP_LIB} OpenSSL::Crypto)
 
-add_executable(recommendation_server ./src/main_recommendation_server.cpp)
+set(RECOMMENDATION_SERVER_SRC
+        src/main_recommendation_server.cpp
+        src/tcp_server.cpp
+        src/json.cpp
+        src/tcp_server_recommendation.cpp
+        )
+
+add_executable(recommendation_server ${RECOMMENDATION_SERVER_SRC})
 target_link_libraries(recommendation_server ${Boost_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 
 set(WEB_SERVER_SRC

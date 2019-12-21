@@ -1,27 +1,30 @@
+Idist: trusty
+
 language: cpp
 
-matrix:
-  include:
-    - os: linux
-      dist: xenial
-      compiler: gcc
-      sudo: required
-    - os: osx
-      compiler: clang
+os:
+  - linux
 
-install: skip
+compiler:
+  - gcc
 
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.9
-      - clang-3.9
-    update: true
+install:
+  - sudo apt update
+  - sudo apt install cmake
+  - sudo apt install libgtest-dev
+  - cd /usr/src/gtest
+  - sudo cmake CMakeLists.txt
+  - sudo make
+  - sudo cp *.a /usr/lib
+  - cd -
+  - sudo apt install cppcheck
+  - sudo apt install valgrind
 
-
-script: skip
+script:
+  - sudo cmake CMakeLists.txt
+  - sudo make
+  - cppcheck -iCMakeFiles --inconclusive --enable=all .
+  - valgrind --tool=memcheck --leak-check=full --leak-resolution=med --track-origins=yes --vgdb=no --error-exitcode=1 ./gtests
 
 notifications:
   email: false
