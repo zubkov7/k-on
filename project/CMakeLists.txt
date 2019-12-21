@@ -3,31 +3,28 @@ project(k-on)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_library(CONCPP_LIB
-        NAMES mysqlcppconn
-        PATHS "${CONCPP_LIB_DIR}")
-
+find_library(CONCPP_LIB NAMES mysqlcppconn PATHS "${CONCPP_LIB_DIR}")
 find_package(GTest REQUIRED)
 find_package(Threads REQUIRED)
 find_package(Boost REQUIRED)
 
-set(SOURCE_FILES
-        src/db_entities.cpp
-        src/db_wrapper.cpp
-        src/db_worker.cpp
-        src/db_worker_recommendations.cpp
-        src/recommendation_system.cpp
-        src/db_recommendation_system.cpp
+set(RECOMMENDATION_SYSTEM_SRC
+        project/src/db_entities.cpp
+        project/src/db_wrapper.cpp
+        project/src/db_worker.cpp
+        project/src/db_worker_recommendations.cpp
+        project/src/recommendation_system.cpp
+        project/src/db_recommendation_system.cpp
+        project/src/tcp_server.cpp
+        project/src/tcp_server_recommendations.cpp
+        project/src/json.cpp
         )
 
-include_directories(
-        include
-)
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(project/include)
 
-add_library(db_work_lib STATIC ${SOURCE_FILES})
-
-add_executable(main src/main.cpp)
-target_link_libraries(main db_work_lib ${CONCPP_LIB})
+add_executable(main project/src/main.cpp)
+target_link_libraries(main ${RECOMMENDATION_SYSTEM_SRC} ${CONCPP_LIB} ${Boost_LIBRARIES})
 
 add_executable(tests tests/tests.cpp)
-target_link_libraries(tests db_work_lib ${CONCPP_LIB} ${GTEST_LIBRARIES} Threads::Threads)
+target_link_libraries(tests ${RECOMMENDATION_SYSTEM_SRC} ${CONCPP_LIB} ${GTEST_LIBRARIES} Threads::Threads)

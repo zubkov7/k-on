@@ -4,8 +4,8 @@
 
 
 TEST(DbWorkerRecommendations, add_users) {
-    DbWorkerRecommendations worker("test");
-    DbWrapper wrapper("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
+    DbWrapper wrapper("test", "localhost", "root", "");
 
     std::vector<User> expected_users = {
             User(1, "alice", "alice"),
@@ -23,7 +23,7 @@ TEST(DbWorkerRecommendations, add_users) {
 }
 
 TEST(DbWorkerRecommendations, add_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
 
     std::vector<Song> expected_songs = {
             Song(1, "Nice Boi", "Eskimo Callboy", "metalcore", 159, "2019-11-01"),
@@ -45,7 +45,7 @@ TEST(DbWorkerRecommendations, add_songs) {
 }
 
 TEST(DbWorkerRecommendations, get_new_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int size = 3;
 
     std::vector<Song> got_songs = worker.get_new_songs(size);
@@ -58,7 +58,7 @@ TEST(DbWorkerRecommendations, get_new_songs) {
 }
 
 TEST(DbWorkerRecommendations, get_all_new_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int size = 8;
 
     std::vector<Song> got_songs = worker.get_new_songs(size);
@@ -71,14 +71,14 @@ TEST(DbWorkerRecommendations, get_all_new_songs) {
 }
 
 TEST(DbWorkerRecommendations, get_more_new_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
 
     std::vector<Song> got_songs = worker.get_new_songs(10);
     EXPECT_EQ(8, got_songs.size());
 }
 
 TEST(DbWorkerRecommendations, add_likes_dislikes) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     
     std::vector<LikeDislike> expected_likes_dislikes = {
             LikeDislike(1, 2, 1, false),
@@ -107,7 +107,7 @@ TEST(DbWorkerRecommendations, add_likes_dislikes) {
 }
 
 TEST(DbWorkerRecommendations, change_likes_dislikes) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
 
     std::vector<LikeDislike> expected_likes_dislikes = {
             LikeDislike(1, 2, 1, false),
@@ -144,7 +144,7 @@ TEST(DbWorkerRecommendations, change_likes_dislikes) {
 }
 
 TEST(DbWorkerRecommendations, get_user_likes_dislikes) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 2;
     const int size = 4;
 
@@ -161,7 +161,7 @@ TEST(DbWorkerRecommendations, get_user_likes_dislikes) {
 }
 
 TEST(DbWorkerRecommendations, add_listens) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     
     std::vector<Listen> expected_listens = {
             Listen(1, 2, 1, 1),
@@ -190,7 +190,7 @@ TEST(DbWorkerRecommendations, add_listens) {
 }
 
 TEST(DbWorkerRecommendations, get_user_listens) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 2;
     const int size = 4;
 
@@ -207,7 +207,7 @@ TEST(DbWorkerRecommendations, get_user_listens) {
 }
 
 TEST(DbWorkerRecommendations, get_popular_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int size = 3;
 
     std::vector<Song> got_songs = worker.get_popular_songs(size);
@@ -220,7 +220,7 @@ TEST(DbWorkerRecommendations, get_popular_songs) {
 }
 
 TEST(DbWorkerRecommendations, get_all_popular_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int size = 8;
 
     std::vector<Song> got_songs = worker.get_popular_songs(size);
@@ -233,14 +233,14 @@ TEST(DbWorkerRecommendations, get_all_popular_songs) {
 }
 
 TEST(DbWorkerRecommendations, get_more_popular_songs) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
 
     std::vector<Song> got_songs = worker.get_popular_songs(10);
     EXPECT_EQ(8, got_songs.size());
 }
 
 TEST(DbWorkerRecommendations, set_recommendations) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 3;
     const int size = 3;
 
@@ -254,7 +254,7 @@ TEST(DbWorkerRecommendations, set_recommendations) {
 }
 
 TEST(DbWorkerRecommendations, set_new_recommendations) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 3;
     const int size = 3;
 
@@ -268,7 +268,7 @@ TEST(DbWorkerRecommendations, set_new_recommendations) {
 }
 
 TEST(DbWorkerRecommendations, get_recommendations) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 3;
     const int size = 2;
 
@@ -277,7 +277,7 @@ TEST(DbWorkerRecommendations, get_recommendations) {
 }
 
 TEST(DbWorkerRecommendations, get_more_recommendations) {
-    DbWorkerRecommendations worker("test");
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int user_id = 3;
 
     std::vector<Song> got_recommendations = worker.get_recommendations(user_id, 5);
