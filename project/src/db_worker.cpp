@@ -1,7 +1,8 @@
 #include "db_worker.h"
 
 
-DbWorker::DbWorker(const std::string &database) : wrapper(DbWrapper(database)) {}
+DbWorker::DbWorker(const std::string &database, const std::string &host, const std::string &user,
+                   const std::string &password) : wrapper(database, host, user, password) {}
 
 DbWorker::~DbWorker() = default;
 

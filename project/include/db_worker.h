@@ -6,7 +6,8 @@
 
 class DbWorker {
 public:
-    explicit DbWorker(const std::string &database);
+    DbWorker(const std::string &database, const std::string &host, const std::string &user,
+             const std::string &password);
     ~DbWorker();
 
     bool add_user(const std::string &login, const std::string &password);
