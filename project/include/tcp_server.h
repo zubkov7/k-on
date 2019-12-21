@@ -1,7 +1,3 @@
-//
-// Created by andrey on 04.12.2019.
-//
-
 #ifndef K_ON_TCP_SERVER_H
 #define K_ON_TCP_SERVER_H
 

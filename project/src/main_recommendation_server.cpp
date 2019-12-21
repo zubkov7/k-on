@@ -1,4 +1,4 @@
-#include "tcp_server_recommendation.h"
+#include "tcp_server_recommendations.h"
 #include <iostream>
 
 int main(int argc, char *argv[]) {
@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     }
 
     try {
-        TcpServerRecommendation server(port);
+        TcpServerRecommendations server(port, "test", "localhost", "root", "");
         server.start_server();
     }
     catch (boost::system::system_error const &e) {

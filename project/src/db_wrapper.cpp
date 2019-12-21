@@ -4,6 +4,12 @@
 #include "db_wrapper.h"
 
 
+DbWrapper::DbWrapper() {
+    sql::Driver *driver = get_driver_instance();
+    connection = driver->connect("localhost", "root", "");
+    connection->setSchema("test");
+}
+
 DbWrapper::DbWrapper(const std::string &database, const std::string &host,
                      const std::string &user, const std::string &password) {
     sql::Driver *driver = get_driver_instance();
@@ -34,10 +40,4 @@ sql::ResultSet *DbWrapper::execute_query(const std::string &query) const {
         std::cout << e.what() << std::endl;
     }
 
-}
-
-DbWrapper::DbWrapper() {
-    sql::Driver *driver = get_driver_instance();
-    connection = driver->connect("localhost", "root", "");
-    connection->setSchema("test");
 }
