@@ -7,24 +7,21 @@
 
 class DbWorkerRecommendations : public DbWorker {
 public:
-    explicit DbWorkerRecommendations(const std::string &database);
+    DbWorkerRecommendations(const std::string &database, const std::string &host,
+                            const std::string &user, const std::string &password);
     ~DbWorkerRecommendations();
 
-    std::vector<User> get_users();
-    std::vector<int> get_user_ids();
-    std::vector<int> get_song_ids();
+    std::vector<User> get_users() const;
+    std::vector<Song> get_songs() const;
+    std::vector<LikeDislike> get_likes_dislikes() const;
+    std::vector<Listen> get_listens() const;
 
-    std::vector<Song> get_songs();
-    std::vector<Song> get_new_songs(int count);
-    std::vector<Song> get_popular_songs(int count);
+    std::vector<int> get_user_ids() const;
+    std::vector<int> get_song_ids() const;
 
-    std::vector<LikeDislike> get_likes_dislikes();
-    std::vector<LikeDislike> get_likes_dislikes(int user_id);
-
-    std::vector<Listen> get_listens();
-    std::vector<Listen> get_listens(int user_id);
-
-    std::vector<Song> get_recommendations(int user_id, int count=0);
+    std::vector<Song> get_new_songs(int count) const;
+    std::vector<Song> get_popular_songs(int count) const;
+    std::vector<Song> get_recommendations(int user_id, int count = 0) const;
     void set_recommendations(int user_id, const std::vector<int> &song_ids);
 };
 
