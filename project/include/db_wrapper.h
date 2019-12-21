@@ -8,8 +8,9 @@
 
 class DbWrapper {
 public:
-    explicit DbWrapper(const std::string &database, const std::string &host="localhost",
-                       const std::string &user="root", const std::string &password="");
+    DbWrapper();
+    explicit DbWrapper(const std::string &database, const std::string &host, const std::string &user,
+                       const std::string &password);
     ~DbWrapper();
 
     bool execute(const std::string &request) const;
