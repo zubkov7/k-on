@@ -7,16 +7,17 @@
 
 class DbRecommendationSystem {
 public:
-    explicit DbRecommendationSystem(const std::string &database);
+    DbRecommendationSystem(const std::string &database, const std::string &host, const std::string &user,
+                           const std::string &password);
     ~DbRecommendationSystem();
 
-    std::vector<Song> get_recommendations(int user_id, int count=0);
+    std::vector<Song> get_recommendations(int user_id, int count = 0) const;
 
     void update_recommendations();
     void update_recommendations(int user_id);
 
-    std::vector<Song> get_popular(int count);
-    std::vector<Song> get_new(int count);
+    std::vector<Song> get_popular(int count) const;
+    std::vector<Song> get_new(int count) const;
     std::vector<Song> get_similar(int song_id, int count);
 
 private:
