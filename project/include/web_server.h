@@ -2,9 +2,10 @@
 #define K_ON_WEB_SERVER_H
 
 
+#include <string>
+
 #include "boost/asio.hpp"
 #include "client.h"
-#include <string>
 
 class Web_server {
 public:
@@ -32,4 +33,4 @@ private:
 };
 
 
-#endif //K_ON_WEB_SERVER_H
+#endif  // K_ON_WEB_SERVER_H

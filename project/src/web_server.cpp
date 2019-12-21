@@ -1,4 +1,3 @@
-#include "web_server.h"
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/http.hpp>
 #include <boost/bind.hpp>
@@ -7,9 +6,11 @@
 #include <iostream>
 #include <fstream>
 
+#include "web_server.h"
+
 #define DEFAULT_PORT 5555
 #define DEFAULT_NUM_THREADS 4
-#define DEFAULT_CONFIG_PATH "/Users/elenaelizarova/CLionProjects/k-on/project/config.txt"
+#define DEFAULT_CONFIG_PATH "../config.txt"
 
 void Web_server::start() {
     if (config_path =="")
@@ -17,6 +18,7 @@ void Web_server::start() {
         config_path=DEFAULT_CONFIG_PATH;
     }
     std::map<std::string, std::string> m = read_config();
+
     port = atoi(m["PORT"].c_str());
     if (port > 65535 || port < 1024)
         port = DEFAULT_PORT;
@@ -25,7 +27,7 @@ void Web_server::start() {
         threads_num = DEFAULT_NUM_THREADS;
 
     host = boost::asio::ip::make_address(m["HOST"].c_str());
-    //host = boost::asio::ip::address::from_string("0.0.0.0");
+    std::cout << host << std::endl;
 
     boost::asio::ip::tcp::endpoint endpoint(host, port);
     acceptor_.open(endpoint.protocol());

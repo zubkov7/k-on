@@ -1,8 +1,5 @@
 #include <iostream>
-
-#include "client.h"
-//#include "tcp_client.h"
-#include "boost/bind.hpp"
+#include <boost/bind.hpp>
 #include <boost/beast/http/parser.hpp>
 #include <boost/beast/http.hpp>
 #include <fstream>
@@ -10,6 +7,10 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <regex>
+
+#include "manager.h"
+#include "client.h"
+#include "json.h"
 
 void Client::read() {
     try {
@@ -46,65 +47,105 @@ void Client::handle_read(const boost::system::error_code &e,
     boost::beast::http::request_parser<boost::beast::http::string_body> p;
     boost::beast::error_code er;
     p.put(boost::asio::buffer(m_Buf), er);
+
     memset(m_Buf,'\0',1024);
-    //std::string str = p.release().at("Cookie").to_string();
-    //std::cerr<<str.substr(str.find("sessionid"))<<std::endl;
-    std::cerr<<p.release().target().to_string()<<std::endl;
 
-    boost::property_tree::ptree response;
-    std::stringstream answer_from_user_server;
+    std::string url = p.release().target().to_string();  // url
+    std::string tmp_session;
+    std::string session;  // сессия
 
-    boost::property_tree::write_json(answer_from_user_server,response);
+    try {
+        std::string tmp_session = p.release().at("Cookie").to_string();
+        std::string session = tmp_session.substr(tmp_session.find("sessionid"));  // сессия
+    }
+    catch (std::out_of_range &e) {
+        session = "";
+    }
 
 
-    /*TcpClient tcp_client;
-    tcp_client.connect("0.0.0.0", "7777");
-    std::string request = p.release().target().to_string();
-    tcp_client.write(request,str.substr(str.find("sessionid")));
-    std::string answer_from_user_server = tcp_client.read();
-    boost::property_tree::write_json(answer_from_user_server,response);
-    tcp_client.close_connection();*/
+    Manager manager;
+    std::string answer_from_manager = manager.handle_request(url, session);
+
+    boost::property_tree::ptree response = parse_to_json(answer_from_manager);
+
+    int status = response.get<int>("status");
 
     std::stringstream response_stream;
-    std::string code_answer = "HTTP/1.1 200 OK\r\n";
-    std::string set_cook;
-    std::string user_info = "OLEG";
-    /*if (answer_from_user_server == "Wrong request")
-    {
-        code_answer= "HTTP/1.1 400 Bad Request\r\n";
-        answer_from_user_server = "Bad Request";
-    }*/
-    /*else if (answer_from_user_server == "Wrong param")
-    {
-        code_answer= "HTTP/1.1 404 Not Found\r\n";
-        answer_from_user_server = "Not Found";
+
+    if (status == 500) {  // Внутренняя ошибка сервера
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 500 Internal Server Error\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 503) {  // Какой-то из сервисов недоступен
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 503 Service Unavailable\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 400) {  // Неправильный запрос
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 400 Bad Request\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 403) {  // Не залогинен нужно перевести на страницу логина
+        std::string html = parse_html("../form.html", "login", "");
+        response_stream << "HTTP/1.1 403 Forbidden\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 303) {  // Не залогинен нужно перевести на страницу логина
+        std::string html = parse_html("../form.html", "login", "");
+        response_stream << "HTTP/1.1 200 OK\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 401) {  // Неправильный логин или пароль
+        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        response_stream << "HTTP/1.1 401 Unauthorized\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    } else if (status == 200) {  // Вернуть ответ
+        std::string login;
+        if (response.find("login") == response.not_found()) {
+            login = "some login";
+        } else {
+            login = response.get<std::string>("login");
+        }
+
+//        std::string str;
+//        for (auto it : response) {
+//            str = str + "<div><a href='/similarsong?song_id=1" +
+//                  "Song Name</a> <a href=/like?song_id=1&value=1" +
+//                  "Like</a> <a href=/listen?song_id=1>" +
+//                  "Listen </a> </div> \n ";
+//        }
+
+        std::string html = parse_html("../index.html", login, stringify_json(response));
+        response_stream << "HTTP/1.1 200 OK\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\nSet-Cookie: sessionid=";
+
+        if (response.find("session") == response.not_found()) {
+            response_stream << session;
+        } else {
+            response_stream << response.get<std::string>("session");
+        }
+        response_stream << "\r\n\r\n"
+                        << html;
     }
-     if response.get()_child("session") != ""
-     {
-        set_cook = "Set-Cookie: sessionid=" + response.get()_child("session"); ""
-     }
-     user_info = response.get_child("user")*/
-    response.add("1","song1");
-    response.add("2","song2");
-    response.add("3","song3");
-     //auto& data_info = response.get_child("user");
-     std::string str;
-     for (auto it:response)
-     {
-         //std::cerr<<it.first.c_str() <<"  "<< it.second.data().c_str()<<std::endl;
-        str = str + "<div><a href='/song/" + it.first+"'>"+it.second.data().c_str()+
-                +"</a> <a href=/like?song_id="
-                +it.first+"> Like </a> <a href=/listen?song_id="
-                +it.first + "> Listen </a> </div> \n ";
-        //it.get_children("duration")+"</a> <a href='"+it.get_children("id")+"'> Like </a> \n ";
-     }
-    //std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
-     //       user_info,str);
-    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/form.html","login","");
-    response_stream << code_answer
-                    << "Content-Length:"<< html.size() <<"\r\n\r\n"
-                    << set_cook
-                    << html;
+
+    std::cout << response_stream.str() << std::endl;
 
     int k = 0;
     k = snprintf(m_SendBuf + k, sizeof(m_SendBuf) - k,
