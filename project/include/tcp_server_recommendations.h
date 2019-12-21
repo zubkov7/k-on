@@ -24,8 +24,8 @@ private:
     std::string on_recommendations(const boost::property_tree::ptree &root) const;
     std::string on_top(const boost::property_tree::ptree &root) const;
     std::string on_recent(const boost::property_tree::ptree &root) const;
-    std::string on_similar(const boost::property_tree::ptree &root);
-    std::string on_update(const boost::property_tree::ptree &root);
+    std::string on_similar(const boost::property_tree::ptree &root) const;
+    std::string on_update(const boost::property_tree::ptree &root) const;
 };
 
 #endif  // K_ON_TCP_SERVER_RECOMMENDATIONS_H

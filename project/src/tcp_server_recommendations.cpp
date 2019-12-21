@@ -58,7 +58,7 @@ std::string TcpServerRecommendations::songs_to_answer(const std::vector<Song> &s
 
         songs_array.push_back(std::make_pair("", element));
     }
-    answer.put("songs", songs_array);
+    answer.add_child("songs", songs_array);
 
     return stringify_json(answer);
 }
@@ -101,7 +101,7 @@ std::string TcpServerRecommendations::on_recent(const boost::property_tree::ptre
     return songs_to_answer(songs);
 }
 
-std::string TcpServerRecommendations::on_similar(const boost::property_tree::ptree &root) {
+std::string TcpServerRecommendations::on_similar(const boost::property_tree::ptree &root) const {
     int song = root.get<int>("song_id");
 
     std::vector<Song> songs;
@@ -115,7 +115,7 @@ std::string TcpServerRecommendations::on_similar(const boost::property_tree::ptr
     return songs_to_answer(songs);
 }
 
-std::string TcpServerRecommendations::on_update(const boost::property_tree::ptree &root) {
+std::string TcpServerRecommendations::on_update(const boost::property_tree::ptree &root) const {
     int user = root.get<int>("user_id");
 
     std::vector<Song> songs;
@@ -126,7 +126,5 @@ std::string TcpServerRecommendations::on_update(const boost::property_tree::ptre
         return on_fail(500, "Database error");
     }
 
-    boost::property_tree::ptree answer;
-    answer.put("status", 200);
-    return stringify_json(answer);
+    return on_recommendations(root);
 }
