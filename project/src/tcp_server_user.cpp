@@ -33,6 +33,9 @@ std::string TcpServerUser::handle_request(const std::string &request) const {
         if (method == "get_user_id") {
             return on_get_user_id(root);
         }
+        if (method == "get_user_login") {
+            return on_get_user_login(root);
+        }
 
         return on_fail(500, "Internal server error: request to the wrong method");
     }
@@ -68,7 +71,7 @@ std::string TcpServerUser::on_inc_listening(const boost::property_tree::ptree &r
     if (status) {
         return user_system_.increment_listening(song_id, user_id);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
     }
 }
 
@@ -83,7 +86,7 @@ std::string TcpServerUser::on_like_song(const boost::property_tree::ptree &root)
     if (status) {
         return user_system_.like_song(song_id, user_id, like_value);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
     }
 }
 
@@ -100,11 +103,29 @@ std::string TcpServerUser::on_get_user_id(const boost::property_tree::ptree &roo
 
     if (status) {
         boost::property_tree::ptree answer;
-        answer.put("login", user_system_.get_login(session));
+        answer.put("login", user_system_.get_login(session, status));
         answer.put("status", "200");
         answer.put("user_id", user_id);
         return stringify_json(answer);
     } else {
-        return on_fail(401, "Unauthorized");
+        return on_fail(403, "Unauthorized");
+    }
+}
+
+std::string TcpServerUser::on_get_user_login(const boost::property_tree::ptree &root) const {
+    std::string session = root.get<std::string>("session");
+
+    bool status;
+
+    std::string login = user_system_.get_login(session, status);
+
+    boost::property_tree::ptree answer;
+
+    if (status) {
+        answer.put("status", "200");
+        answer.put("login", login);
+        return stringify_json(answer);
+    } else {
+        return on_fail(403, "Unauthorized");
     }
 }

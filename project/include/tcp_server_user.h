@@ -25,6 +25,7 @@ private:
     std::string on_like_song(const boost::property_tree::ptree &root) const;
     std::string on_get_user_id(const boost::property_tree::ptree &root) const;
     std::string on_logout(const boost::property_tree::ptree &root) const;
+    std::string on_get_user_login(const boost::property_tree::ptree &root) const;
 };
 
 
