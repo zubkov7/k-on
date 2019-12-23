@@ -206,11 +206,17 @@ std::string Client::parse_html(std::string html_way, std::string user_info, std:
 std::string Client::json_to_songs(boost::property_tree::ptree& response) {
     //auto bb=response.get_child("songs");
     std::string str;
+    std::string buf_str;
+    size_t min =0;
+    size_t sec =0;
     for (auto it:response)
     {
+        buf_str = it.second.get_child("duration").data().c_str();
+        min = std::stoi(buf_str) / 60 ;
+        sec = std::stoi(buf_str) - min*60 ;
         str = str + "<div> <a href='/similarsong?song_id=" + it.second.get_child("id").data().c_str() + "'>" +
               it.second.get_child("name").data().c_str() + "</a> Duration:" +
-              it.second.get_child("duration").data().c_str()
+              std::to_string(min) + ":" + std::to_string(sec) +
               + "<a href='/like?song_id=" + it.second.get_child("id").data().c_str() + "&value=1' > Like </a>" +
               "<a href='/listen?song_id=" + it.second.get_child("id").data().c_str() + "'> Listen </a></div>" +
               "\n";
