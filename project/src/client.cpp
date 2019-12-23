@@ -224,10 +224,3 @@ std::string Client::json_to_songs(boost::property_tree::ptree& response) {
 
     return str;
 }
-
-//        for (auto it : response) {
-//            str = str + "<div><a href='/similarsong?song_id=1" +
-//                  "Song Name</a> <a href=/like?song_id=1&value=1" +
-//                  "Like</a> <a href=/listen?song_id=1>" +
-//                  "Listen </a> </div> \n ";
-//        }
