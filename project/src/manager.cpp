@@ -204,7 +204,6 @@ std::string Manager::on_index_or_update(const std::string &session, const std::s
         answer = read();
 
         root = parse_to_json(answer);
-        root.put("session", session);
         root.put("login", login);
         root.put("page", "index");
         root.put("status", "200");
