@@ -46,11 +46,6 @@ std::string UserSystem::increment_listening(int song_id, int user_id) const {
         root.put("message", "Error! Song does not exist");
         return stringify_json(root);
     }
-    if (!db_worker_.is_user_exists(user_id)) {
-        root.put("status", "400");
-        root.put("message", "Error! User does not exist");
-        return stringify_json(root);
-    }
 
     int quantity_of_listening = db_worker_.increment_listening(song_id, user_id);
     root.put("status", "200");
@@ -63,11 +58,6 @@ std::string UserSystem::like_song(int song_id, int user_id, bool value) const {
     if (!db_worker_.is_song_exists(song_id)) {
         root.put("status", "400");
         root.put("message", "Error! Song does not exist");
-        return stringify_json(root);
-    }
-    if (!db_worker_.is_user_exists(user_id)) {
-        root.put("status", "400");
-        root.put("message", "Error! User does not exist");
         return stringify_json(root);
     }
 
@@ -91,16 +81,11 @@ std::string UserSystem::logout(const std::string &session) const {
     return on_fail(303, "Redirect to login page");
 }
 
-std::string UserSystem::get_login(const std::string &session) const {
-    bool status;
+std::string UserSystem::get_login(const std::string &session, bool &status) const {
     std::string login = db_worker_.get_login(session, status);
-    boost::property_tree::ptree root;
     if (status) {
         return login;
-    } else {
-        root.put("status", "403");
-        root.put("message", "Redirect to login page");
     }
 
-    return stringify_json(root);
+    return "";
 }
