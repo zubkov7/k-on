@@ -47,9 +47,11 @@ void Client::handle_read(const boost::system::error_code &e,
     boost::beast::error_code er;
     p.put(boost::asio::buffer(m_Buf), er);
     memset(m_Buf,'\0',1024);
-    //std::string str = p.release().at("Cookie").to_string();
-    //std::cerr<<str.substr(str.find("sessionid"))<<std::endl;
-    std::cerr<<p.release().target().to_string()<<std::endl;
+    //std::string str1 = p.release().at("Cookie").to_string();
+    //std::cerr << str1.substr(str1.find("sessionid")) << std::endl;
+
+    // std::string str = p.release().at("Cookie").to_string().substr(str.find("sessionid"));
+    //std::cerr<<p.release().target().to_string()<<std::endl;
 
     boost::property_tree::ptree response;
     std::stringstream answer_from_user_server;
@@ -91,16 +93,14 @@ void Client::handle_read(const boost::system::error_code &e,
      std::string str;
      for (auto it:response)
      {
-         //std::cerr<<it.first.c_str() <<"  "<< it.second.data().c_str()<<std::endl;
         str = str + "<div><a href='/song/" + it.first+"'>"+it.second.data().c_str()+
                 +"</a> <a href=/like?song_id="
                 +it.first+"> Like </a> <a href=/listen?song_id="
                 +it.first + "> Listen </a> </div> \n ";
-        //it.get_children("duration")+"</a> <a href='"+it.get_children("id")+"'> Like </a> \n ";
      }
     //std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
      //       user_info,str);
-    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/form.html","login","");
+    std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html","Oleg",str);
     response_stream << code_answer
                     << "Content-Length:"<< html.size() <<"\r\n\r\n"
                     << set_cook
@@ -117,6 +117,10 @@ void Client::handle_read(const boost::system::error_code &e,
                 // После того, как запишем ответ, можно снова читать
                 self->read();
             });
+    boost::system::error_code lErrorCode;
+    m_Sock.close(lErrorCode);
+    std::cout << lErrorCode.message() << std::endl;
+
 }
 
 std::string Client::parse_html(std::string html_way,std::string user_info,std::string data_info) {
