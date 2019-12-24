@@ -20,8 +20,7 @@ void Client::read() {
                             boost::asio::placeholders::error,
                             boost::asio::placeholders::bytes_transferred));
     }
-    catch (boost::system::system_error const &e)
-    {
+    catch (boost::system::system_error const &e) {
         if (e.code() == boost::asio::error::eof) {  // Клиент закрыл соединение
             std::cout << "-client: Connection closed by peer\n";
             this->sock().close();
@@ -58,7 +57,7 @@ void Client::handle_read(const boost::system::error_code &e,
     std::string tmp_session;
     std::string session;  // сессия
 
-    memset(m_Buf,'\0',1024);
+    memset(m_Buf, '\0', 1024);
     try {
         tmp_session = p_tmp.release().at("Cookie").to_string();
         std::cout << "tmp session: " << tmp_session << std::endl;
@@ -139,7 +138,7 @@ void Client::handle_read(const boost::system::error_code &e,
 //                  "Listen </a> </div> \n ";
 //        }
 
-        std::string html = parse_html("../index.html", login, stringify_json(response));
+        std::string html = parse_html("../index.html", login, json_to_songs(response));
         response_stream << "HTTP/1.1 200 OK\r\n"
                         << "Content-Length:"
                         << html.size()
@@ -168,7 +167,7 @@ void Client::handle_read(const boost::system::error_code &e,
             });
 }
 
-std::string Client::parse_html(std::string html_way,std::string user_info,std::string data_info) {
+std::string Client::parse_html(std::string html_way, std::string user_info, std::string data_info) {
 
     std::string line;
     std::stringstream buffer;
@@ -178,12 +177,9 @@ std::string Client::parse_html(std::string html_way,std::string user_info,std::s
         buffer << in.rdbuf();
     }
     in.close();
-    if (user_info == "login")
-    {
+    if (user_info == "login") {
         line = std::regex_replace(buffer.str(), std::regex("\\$root"), "login");
-    }
-    else if (user_info == "sign_up")
-    {
+    } else if (user_info == "sign_up") {
         line = std::regex_replace(buffer.str(), std::regex("\\$root"), "signup");
 
     } else {
@@ -191,4 +187,23 @@ std::string Client::parse_html(std::string html_way,std::string user_info,std::s
         line = std::regex_replace(line, std::regex("\\$data"), "<a href='/song/1'>" + data_info + "</a>");
     }
     return line;
+}
+
+std::string Client::json_to_songs(boost::property_tree::ptree &response) {
+    auto songs_array = response.get_child("songs");
+
+    std::string str;
+    for (auto song : songs_array) {
+        int duration = song.second.get<int>("duration");
+        int minutes = duration / 60;
+        int seconds = duration - minutes * 60;
+        str += "<div> <a href='/similarsong?song_id=" + std::to_string(song.second.get<int>("id")) + "'>" +
+               song.second.get<std::string>("author") + " - " +
+               song.second.get<std::string>("name") + "</a>  " +
+               std::to_string(minutes) + ":" + std::to_string(seconds) +
+               + "<a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&value=1' > Like </a>" +
+               "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) + "'> Listen </a></div>" +
+               "\n";
+    }
+    return str;
 }

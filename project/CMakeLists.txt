@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_COMPILER g++)
 set(CMAKE_CXX_FLAGS "-std=c++0x")
 
-find_package (Threads REQUIRED)
+find_package(Threads REQUIRED)
 find_package(Boost 1.71.0 REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_library(CONCPP_LIB NAMES mysqlcppconn PATHS "${CONCPP_LIB_DIR}" REQUIRED)
