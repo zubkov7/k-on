@@ -23,11 +23,11 @@ std::vector<int> RecommendationSystem::calculate_recommendations(int user_id, co
 
     std::vector<std::pair<int, double>> songs;
     for (int i = 0; i < song_ids.size(); i++) {
-        if (pref_matrix[user_id][song_ids[i]] < 1) {
+        if (pref_matrix[user_pos][song_ids[i]] < 1) {
             songs.emplace_back(std::make_pair(song_ids[i], weight_matrix[i]));
         }
     }
-    std::sort(songs.begin(), songs.end(), less<int, double>());
+    std::sort(songs.begin(), songs.end(), grater<int, double>());
 
     std::vector<int> result;
     for (const auto &pair : songs) {
@@ -44,10 +44,9 @@ std::vector<Song> RecommendationSystem::get_similar(int song_id, int count) cons
 void RecommendationSystem::update_pref_matrix(const std::vector<int> &user_ids, const std::vector<int> &song_ids,
                                               const std::vector<LikeDislike> &likes_dislikes,
                                               const std::vector<Listen> &listens) const {
-    for (auto row : pref_matrix) {
-        for (auto column : row) {
-            row[column] = 0.0;
-        }
+    pref_matrix.resize(user_ids.size());
+    for (auto &row : pref_matrix) {
+        row.resize(song_ids.size(), 0.0);
     }
 
     for (const auto &like_dislike : likes_dislikes) {

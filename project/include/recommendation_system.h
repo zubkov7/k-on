@@ -9,9 +9,9 @@
 typedef std::vector<std::vector<double>> DoubleMatrix;
 
 template<class T1, class T2>
-struct less {
+struct grater {
     bool operator()(const std::pair<T1, T2> &l, const std::pair<T1, T2> &r) {
-        return l.second < r.second;
+        return l.second > r.second;
     }
 };
 

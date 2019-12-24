@@ -2,7 +2,9 @@
 
 
 DbRecommendationSystem::DbRecommendationSystem(const std::string &database, const std::string &host,
-        const std::string &user, const std::string &password) : worker(database, host, user, password) {}
+        const std::string &user, const std::string &password) : worker(database, host, user, password) {
+    update_recommendations();
+}
 
 DbRecommendationSystem::~DbRecommendationSystem() = default;
 
