@@ -12,6 +12,14 @@
 #include "client.h"
 //#include "json.h"
 
+
+boost::property_tree::ptree parse_to_json(const std::string &str_to_parse) {
+    boost::property_tree::ptree root;
+    std::stringstream stream(str_to_parse);
+    boost::property_tree::read_json(stream, root);
+    return root;
+}
+
 void Client::read() {
     try {
         m_Sock.async_read_some(
@@ -68,28 +76,14 @@ void Client::handle_read(const boost::system::error_code &e,
         session = "";
     }
 
-    //std::cout << "session: " << session << std::endl;
-
-
-    //Manager manager;
-    //std::string answer_from_manager = manager.handle_request(url, session);
-
-    //boost::property_tree::ptree response = parse_to_json(answer_from_manager);
-    boost::property_tree::ptree response;
     std::stringstream answer_from_user_server;
-    boost::property_tree::write_json(answer_from_user_server, response);
-    int n = 10;
-    response.add("size", n);
-    response.add("status", 200);
-    response.add("songs", "");
-    auto bb=response.get_child("songs");
-    for (int i=0;i<n;i++)
-    {
-        bb.add(std::to_string(i),"123");
-        bb.get_child(std::to_string(i)).add("name","name"+std::to_string(i));
-        bb.get_child(std::to_string(i)).add("id",i);
-        bb.get_child(std::to_string(i)).add("duration",i*100);
+    std::ifstream in("/Users/elenaelizarova/CLionProjects/k-on/project/package.json"); //// окрываем файл для чтения
+    if (in.is_open()) {
+        answer_from_user_server << in.rdbuf();
     }
+    boost::property_tree::ptree response = parse_to_json(answer_from_user_server.str());
+
+
     int status = response.get<int>("status");
 
     std::stringstream response_stream;
@@ -144,11 +138,11 @@ void Client::handle_read(const boost::system::error_code &e,
             login = response.get<std::string>("login");
         }
 
-        std:: string songs = json_to_songs(bb);
 
 
 
-        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html", login,songs);
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
+                login,json_to_songs(response));
         //stringify_json(response));
         response_stream << "HTTP/1.1 200 OK\r\n"
                         << "Content-Length:"
@@ -204,22 +198,25 @@ std::string Client::parse_html(std::string html_way, std::string user_info, std:
 }
 
 std::string Client::json_to_songs(boost::property_tree::ptree& response) {
-    //auto bb=response.get_child("songs");
+    auto songs_array = response.get_child("songs");
+
     std::string str;
-    std::string buf_str;
-    size_t min =0;
-    size_t sec =0;
-    for (auto it:response)
-    {
-        buf_str = it.second.get_child("duration").data().c_str();
-        min = std::stoi(buf_str) / 60 ;
-        sec = std::stoi(buf_str) - min*60 ;
-        str = str + "<div> <a href='/similarsong?song_id=" + it.second.get_child("id").data().c_str() + "'>" +
-              it.second.get_child("name").data().c_str() + "</a> Duration:" +
-              std::to_string(min) + ":" + std::to_string(sec) +
-              + "<a href='/like?song_id=" + it.second.get_child("id").data().c_str() + "&value=1' > Like </a>" +
-              "<a href='/listen?song_id=" + it.second.get_child("id").data().c_str() + "'> Listen </a></div>" +
-              "\n";
+    for (auto song : songs_array) {
+        int duration = song.second.get<int>("duration");
+        int minutes = duration / 60;
+        int seconds_val = duration - minutes * 60;
+        std::string seconds = std::to_string(seconds_val);
+        if (seconds_val < 10)
+        {
+            seconds = "0" + seconds;
+        }
+        str += "<div> <a href='/similarsong?song_id=" + std::to_string(song.second.get<int>("id")) + "'>" +
+               song.second.get<std::string>("author") + " - " +
+               song.second.get<std::string>("name") + "</a>  " +
+               std::to_string(minutes) + ":" +seconds +
+               + "<a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&value=1' > Like </a>" +
+               "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) + "'> Listen </a></div>" +
+               "\n";
     }
 
     return str;
