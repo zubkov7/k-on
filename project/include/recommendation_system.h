@@ -28,10 +28,10 @@ public:
     void update_pref_matrix(const std::vector<int> &user_ids, const std::vector<int> &song_ids,
                             const std::vector<LikeDislike> &likes_dislikes, const std::vector<Listen> &listens) const;
 
-public:
+private:
     mutable DoubleMatrix pref_matrix;
 
-public:
+private:
     static DoubleMatrix get_transposed(const DoubleMatrix &matrix);
     static double calculate_correlation(const std::vector<double> &first_user, const std::vector<double> &second_user);
 
