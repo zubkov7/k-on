@@ -9,10 +9,15 @@ DbRecommendationSystem::DbRecommendationSystem(const std::string &database, cons
 DbRecommendationSystem::~DbRecommendationSystem() = default;
 
 std::vector<Song> DbRecommendationSystem::get_recommendations(int user_id, int count) const {
-    return worker.get_recommendations(user_id, count);
+    auto recommendations = worker.get_recommendations(user_id, count);
+    if (recommendations.empty()) {
+        update_recommendations(user_id);
+        recommendations = worker.get_recommendations(user_id, count);
+    }
+    return recommendations;
 }
 
-void DbRecommendationSystem::update_recommendations() {
+void DbRecommendationSystem::update_recommendations() const {
     std::vector<int> user_ids = worker.get_user_ids();
     std::vector<int> song_ids = worker.get_song_ids();
     std::vector<LikeDislike> likes_dislikes = worker.get_likes_dislikes();

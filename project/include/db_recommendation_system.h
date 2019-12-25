@@ -13,7 +13,7 @@ public:
 
     std::vector<Song> get_recommendations(int user_id, int count = 0) const;
 
-    void update_recommendations();
+    void update_recommendations() const;
     void update_recommendations(int user_id) const;
 
     std::vector<Song> get_popular(int count) const;
