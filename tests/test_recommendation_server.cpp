@@ -158,6 +158,20 @@ TEST(DbWorkerRecommendations, change_likes_dislikes) {
     EXPECT_EQ(expected_likes_dislikes, got_likes_dislikes);
 }
 
+TEST(DbWorkerRecommendations, get_songs_by_likes) {
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
+
+    const int user_id = 2;
+    std::vector<Song> expected_songs = {
+            Song(2, "Black Files", "Ben Howard", "indie folk", 381, "2011-09-30"),
+            Song(4, "Hunger", "The Score", "alternative rock", 123, "2019-08-09"),
+            Song(7, "Prey", "The Neighbourhood", "indie pop", 282, "2015-10-30"),
+    };
+
+    std::vector<Song> got_songs = worker.get_songs_by_likes(user_id);
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
 TEST(DbWorkerRecommendations, add_listens) {
     DbWorkerRecommendations worker("test", "localhost", "root", "");
     
