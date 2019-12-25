@@ -27,7 +27,7 @@ std::vector<int> RecommendationSystem::calculate_recommendations(int user_id, co
 
     std::vector<std::pair<int, double>> songs;
     for (int i = 0; i < song_ids.size(); i++) {
-        if (pref_matrix[user_pos][song_ids[i]] < 1) {
+        if (pref_matrix[user_pos][i] < 1) {
             songs.emplace_back(std::make_pair(song_ids[i], weight_matrix[i]));
         }
     }

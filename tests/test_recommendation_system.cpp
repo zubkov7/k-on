@@ -66,7 +66,7 @@ TEST(RecommendationSystem, calculate_pref_matrix) {
     }
 }
 
-TEST(RecommendationSystem, with_deleted_users_and_songs) {
+TEST(RecommendationSystem, calculate_pref_matrix_with_deleted) {
     RecommendationSystem recommendation_system;
 
     std::vector<int> user_ids = { 1, 3, 5, 7 };
@@ -236,6 +236,38 @@ TEST(RecommendationSystem, get_weight_matrix) {
     std::vector<double> expected_matrix = { 5.3, 0.9, 2.9, 3.5, 1.95, 2.5 };
     EXPECT_EQ(6, got_matrix.size());
     EXPECT_EQ(expected_matrix, got_matrix);
+}
+
+TEST(RecommendationSystem, calculate_recommendations) {
+    RecommendationSystem recommendation_system;
+    std::vector<int> user_ids = { 1, 2, 3 };
+    std::vector<int> song_ids = { 1, 2, 3, 4, 5, 6 };
+
+    recommendation_system.pref_matrix = {
+            { 0.0, 3.0, 4.0, 0.0, 0.0, 0.0 },
+            { 1.0, 0.0, 2.0, 3.0, 1.0, 1.0 },
+            { 4.0, 2.0, 2.0, 0.0, 1.0, 0.0 }
+    };
+    std::vector<int> got_songs = recommendation_system.calculate_recommendations(1, user_ids, song_ids);
+    std::vector<int> expected_songs = { 1, 4, 5, 6 };
+
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
+TEST(RecommendationSystem, calculate_recommendations_with_deleted) {
+    RecommendationSystem recommendation_system;
+    std::vector<int> user_ids = { 2, 4, 6 };
+    std::vector<int> song_ids = { 1, 2, 4, 6, 8, 9 };
+
+    recommendation_system.pref_matrix = {
+            { 0.0, 3.0, 4.0, 0.0, 0.0, 0.0 },
+            { 1.0, 0.0, 2.0, 3.0, 1.0, 1.0 },
+            { 4.0, 2.0, 2.0, 0.0, 1.0, 0.0 }
+    };
+    std::vector<int> got_songs = recommendation_system.calculate_recommendations(2, user_ids, song_ids);
+    std::vector<int> expected_songs = { 1, 6, 8, 9 };
+
+    EXPECT_EQ(expected_songs, got_songs);
 }
 
 int main(int argc, char **argv) {
