@@ -9,9 +9,9 @@
 typedef std::vector<std::vector<double>> DoubleMatrix;
 
 template<class T1, class T2>
-struct less {
+struct grater {
     bool operator()(const std::pair<T1, T2> &l, const std::pair<T1, T2> &r) {
-        return l.second < r.second;
+        return l.second > r.second;
     }
 };
 
@@ -21,14 +21,14 @@ public:
     ~RecommendationSystem();
 
     std::vector<int> calculate_recommendations(int user_id, const std::vector<int> &user_ids,
-                                               const std::vector<int> &song_ids);
-    std::vector<Song> get_similar(int song_id, int count);
+                                               const std::vector<int> &song_ids) const;
+    std::vector<Song> get_similar(int song_id, int count) const;
 
     void update_pref_matrix(const std::vector<int> &user_ids, const std::vector<int> &song_ids,
-                            const std::vector<LikeDislike> &likes_dislikes, const std::vector<Listen> &listens);
+                            const std::vector<LikeDislike> &likes_dislikes, const std::vector<Listen> &listens) const;
 
 private:
-    DoubleMatrix pref_matrix;
+    mutable DoubleMatrix pref_matrix;
 
 private:
     static DoubleMatrix get_transposed(const DoubleMatrix &matrix);
@@ -38,5 +38,6 @@ private:
     static std::vector<double> get_weight_matrix(const std::vector<double> &corr_matrix,
                                                  const DoubleMatrix &transposed_pref_matrix);
 };
+
 
 #endif  // K_ON_RECOMMENDATION_SYSTEM_H

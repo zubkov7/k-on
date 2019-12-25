@@ -54,4 +54,5 @@ struct Listen {
     unsigned int count;
 };
 
-#endif  // K_ON_DB_ENTITIES__
+
+#endif  // K_ON_DB_ENTITIES_H

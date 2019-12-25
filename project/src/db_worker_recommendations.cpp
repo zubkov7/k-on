@@ -154,7 +154,7 @@ std::vector<Song> DbWorkerRecommendations::get_recommendations(int user_id, int 
     return songs;
 }
 
-void DbWorkerRecommendations::set_recommendations(int user_id, const std::vector<int> &song_ids) {
+void DbWorkerRecommendations::set_recommendations(int user_id, const std::vector<int> &song_ids) const {
     wrapper.execute(
             "delete from recommendation "
             "where user_id = " + std::to_string(user_id)

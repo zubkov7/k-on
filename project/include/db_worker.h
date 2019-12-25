@@ -20,4 +20,5 @@ protected:
     DbWrapper wrapper;
 };
 
+
 #endif  // K_ON_DB_WORKER_H

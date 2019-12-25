@@ -28,4 +28,5 @@ private:
     std::string on_update(const boost::property_tree::ptree &root) const;
 };
 
+
 #endif  // K_ON_TCP_SERVER_RECOMMENDATIONS_H

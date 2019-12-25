@@ -14,15 +14,16 @@ public:
     std::vector<Song> get_recommendations(int user_id, int count = 0) const;
 
     void update_recommendations();
-    void update_recommendations(int user_id);
+    void update_recommendations(int user_id) const;
 
     std::vector<Song> get_popular(int count) const;
     std::vector<Song> get_new(int count) const;
-    std::vector<Song> get_similar(int song_id, int count);
+    std::vector<Song> get_similar(int song_id, int count) const;
 
 private:
     DbWorkerRecommendations worker;
     RecommendationSystem recommendation_system;
 };
+
 
 #endif  // K_ON_DB_RECOMMENDATION_SYSTEM_H

@@ -2,7 +2,9 @@
 
 
 DbRecommendationSystem::DbRecommendationSystem(const std::string &database, const std::string &host,
-        const std::string &user, const std::string &password) : worker(database, host, user, password) {}
+        const std::string &user, const std::string &password) : worker(database, host, user, password) {
+    update_recommendations();
+}
 
 DbRecommendationSystem::~DbRecommendationSystem() = default;
 
@@ -23,7 +25,7 @@ void DbRecommendationSystem::update_recommendations() {
     }
 }
 
-void DbRecommendationSystem::update_recommendations(int user_id) {
+void DbRecommendationSystem::update_recommendations(int user_id) const {
     std::vector<int> user_ids = worker.get_user_ids();
     std::vector<int> song_ids = worker.get_song_ids();
     std::vector<LikeDislike> likes_dislikes = worker.get_likes_dislikes();
@@ -42,6 +44,6 @@ std::vector<Song> DbRecommendationSystem::get_new(int count) const {
     return worker.get_new_songs(count);
 }
 
-std::vector<Song> DbRecommendationSystem::get_similar(int song_id, int count) {
+std::vector<Song> DbRecommendationSystem::get_similar(int song_id, int count) const {
     return recommendation_system.get_similar(song_id, count);
 }

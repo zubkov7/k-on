@@ -29,9 +29,14 @@ bool DbWrapper::execute(const std::string &request) const {
 }
 
 sql::ResultSet *DbWrapper::execute_query(const std::string &query) const {
-    sql::Statement *statement = connection->createStatement();
-    sql::ResultSet *result = statement->executeQuery(query);
+    try {
+        sql::Statement *statement = connection->createStatement();
+        sql::ResultSet *result = statement->executeQuery(query);
 
-    delete statement;
-    return result;
+        delete statement;
+        return result;
+    }
+    catch (sql::SQLException &e) {
+        std::cout << e.what() << std::endl;
+    }
 }

@@ -5,8 +5,7 @@
 
 
 TcpServerRecommendations::TcpServerRecommendations(unsigned short port, const std::string &database,
-                                                   const std::string &host, const std::string &user,
-                                                   const std::string &password) :
+        const std::string &host, const std::string &user, const std::string &password) :
         TcpServer(port), recommendation_system(database, host, user, password) {}
 
 std::string TcpServerRecommendations::handle_request(const std::string &request) const {

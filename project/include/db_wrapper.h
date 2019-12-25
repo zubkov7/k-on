@@ -20,4 +20,5 @@ private:
     sql::Connection *connection;
 };
 
+
 #endif  // K_ON_DB_WRAPPER_H

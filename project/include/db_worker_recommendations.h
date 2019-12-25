@@ -1,5 +1,7 @@
-#ifndef K_ON_DBWORKERRECOMMENDATIONS_H
-#define K_ON_DBWORKERRECOMMENDATIONS_H
+#ifndef K_ON_DB_WORKER_RECOMMENDATIONS_H
+#define K_ON_DB_WORKER_RECOMMENDATIONS_H
+
+#include <vector>
 
 #include "db_worker.h"
 #include "db_entities.h"
@@ -22,7 +24,8 @@ public:
     std::vector<Song> get_new_songs(int count) const;
     std::vector<Song> get_popular_songs(int count) const;
     std::vector<Song> get_recommendations(int user_id, int count = 0) const;
-    void set_recommendations(int user_id, const std::vector<int> &song_ids);
+    void set_recommendations(int user_id, const std::vector<int> &song_ids) const;
 };
 
-#endif  // K_ON_DBWORKERRECOMMENDATIONS_H
+
+#endif  // K_ON_DB_WORKER_RECOMMENDATIONS_H
