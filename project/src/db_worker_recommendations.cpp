@@ -13,7 +13,7 @@ std::vector<User> DbWorkerRecommendations::get_users() const {
             "select * from user"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         users.emplace_back(result->getInt("id"), result->getString("login"),
                            result->getString("password"));
     }
@@ -27,7 +27,7 @@ std::vector<Song> DbWorkerRecommendations::get_songs() const {
             "select * from song"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));
@@ -42,7 +42,7 @@ std::vector<LikeDislike> DbWorkerRecommendations::get_likes_dislikes() const {
             "select * from like_dislike"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         likes_dislikes.emplace_back(result->getInt("id"), result->getInt("user_id"), result->getInt("song_id"),
                                     result->getBoolean("value"));
     }
@@ -56,7 +56,7 @@ std::vector<Listen> DbWorkerRecommendations::get_listens() const {
             "select * from listen"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         listens.emplace_back(result->getInt("id"), result->getInt("user_id"), result->getInt("song_id"),
                              result->getInt("count"));
     }
@@ -70,7 +70,7 @@ std::vector<int> DbWorkerRecommendations::get_user_ids() const {
             "select * from user"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         users.emplace_back(result->getInt("id"));
     }
     return users;
@@ -83,8 +83,26 @@ std::vector<int> DbWorkerRecommendations::get_song_ids() const {
             "select * from song"
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         songs.emplace_back(result->getInt("id"));
+    }
+    return songs;
+}
+
+std::vector<Song> DbWorkerRecommendations::get_songs_by_ids(const std::vector<int> &song_ids) const {
+    std::vector<Song> songs;
+
+    for (const auto &id : song_ids) {
+        sql::ResultSet *result = wrapper.execute_query(
+                "select * from song "
+                "where id = " + std::to_string(id)
+        );
+
+        while (result->next()) {
+            songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
+                               result->getString("genre"), result->getInt("duration"),
+                               result->getString("date"));
+        }
     }
     return songs;
 }
@@ -98,7 +116,7 @@ std::vector<Song> DbWorkerRecommendations::get_new_songs(int count) const {
             "limit " + std::to_string(count)
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));
@@ -119,7 +137,7 @@ std::vector<Song> DbWorkerRecommendations::get_popular_songs(int count) const {
             "limit " + std::to_string(count)
     );
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));
@@ -146,7 +164,7 @@ std::vector<Song> DbWorkerRecommendations::get_recommendations(int user_id, int 
         );
     }
 
-    for (int i = 0; result->next(); i++) {
+    while (result->next()) {
         songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
                            result->getString("genre"), result->getInt("duration"),
                            result->getString("date"));

@@ -5,6 +5,7 @@
 
 #include "recommendation_system.h"
 
+
 typedef int id;
 typedef int position;
 
@@ -40,9 +41,29 @@ std::vector<int> RecommendationSystem::calculate_recommendations(int user_id, co
     return result;
 }
 
-std::vector<Song> RecommendationSystem::get_similar(int song_id, int count) const {
-    // TODO: implement
-    return std::vector<Song>();
+std::vector<int> RecommendationSystem::get_similar_songs(int song_id, int count, const std::vector<int> &user_ids,
+                                                         const std::vector<int> &song_ids) const {
+    int song_pos = 0;
+    while (song_ids[song_pos] != song_id) {
+        song_pos++;
+    }
+    
+    DoubleMatrix transposed_matrix = get_transposed(pref_matrix);
+    std::vector<double> corr_matrix = get_corr_matrix(transposed_matrix, transposed_matrix[song_pos]);
+
+    std::vector<std::pair<int, double>> songs;
+    for (int i = 0; i < song_ids.size(); i++) {
+        if (i != song_pos) {
+            songs.emplace_back(std::make_pair(song_ids[i], corr_matrix[i]));
+        }
+    }
+    std::sort(songs.begin(), songs.end(), grater<int, double>());
+
+    std::vector<int> result;
+    for (int i = 0; i < count && i < songs.size(); i++) {
+        result.emplace_back(songs[i].first);
+    }
+    return result;
 }
 
 void RecommendationSystem::update_pref_matrix(const std::vector<int> &user_ids, const std::vector<int> &song_ids,
@@ -86,16 +107,16 @@ DoubleMatrix RecommendationSystem::get_transposed(const DoubleMatrix &matrix) {
     return transposed_matrix;
 }
 
-double RecommendationSystem::calculate_correlation(const std::vector<double> &first_user,
-                                                   const std::vector<double> &second_user) {
+double RecommendationSystem::calculate_correlation(const std::vector<double> &first_vector,
+                                                   const std::vector<double> &second_vector) {
     double correlation = 0.0;
     double first_average = 0.0;
     double second_average = 0.0;
 
-    for (int i = 0; i < first_user.size(); i++) {
-        correlation += double(first_user[i]) * double(second_user[i]);
-        first_average += pow(double(first_user[i]), 2);
-        second_average += pow(double(second_user[i]), 2);
+    for (int i = 0; i < first_vector.size(); i++) {
+        correlation += double(first_vector[i]) * double(second_vector[i]);
+        first_average += pow(double(first_vector[i]), 2);
+        second_average += pow(double(second_vector[i]), 2);
     }
 
     first_average = sqrt(first_average);
@@ -111,11 +132,11 @@ double RecommendationSystem::calculate_correlation(const std::vector<double> &fi
 }
 
 std::vector<double> RecommendationSystem::get_corr_matrix(const DoubleMatrix &pref_matrix,
-                                                          const std::vector<double> &user_pref) {
+                                                          const std::vector<double> &pref_row) {
     std::vector<double> corr_matrix;
 
     for (const auto &i_pref : pref_matrix) {
-        corr_matrix.emplace_back(calculate_correlation(i_pref, user_pref));
+        corr_matrix.emplace_back(calculate_correlation(i_pref, pref_row));
     }
     return corr_matrix;
 }
@@ -124,7 +145,7 @@ std::vector<double> RecommendationSystem::get_weight_matrix(const std::vector<do
                                                             const DoubleMatrix &transposed_pref_matrix) {
     std::vector<double> weight_matrix;
 
-    for (const auto & row : transposed_pref_matrix) {
+    for (const auto &row : transposed_pref_matrix) {
         double weight = std::inner_product(corr_matrix.begin(), corr_matrix.end(), row.begin(), 0.0);
         weight_matrix.emplace_back(weight);
     }

@@ -21,6 +21,7 @@ public:
     std::vector<int> get_user_ids() const;
     std::vector<int> get_song_ids() const;
 
+    std::vector<Song> get_songs_by_ids(const std::vector<int> &song_ids) const;
     std::vector<Song> get_new_songs(int count) const;
     std::vector<Song> get_popular_songs(int count) const;
     std::vector<Song> get_recommendations(int user_id, int count = 0) const;
