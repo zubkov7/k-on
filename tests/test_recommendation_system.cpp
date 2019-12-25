@@ -270,6 +270,54 @@ TEST(RecommendationSystem, calculate_recommendations_with_deleted) {
     EXPECT_EQ(expected_songs, got_songs);
 }
 
+TEST(RecommendationSystem, get_similar_songs) {
+    RecommendationSystem recommendation_system;
+    std::vector<int> user_ids = { 1, 2, 3 };
+    std::vector<int> song_ids = { 1, 2, 3, 4, 5, 6 };
+
+    recommendation_system.pref_matrix = {
+            { 0.0, 3.0, 4.0, 0.0, 0.0, 0.0 },
+            { 1.0, 0.0, 2.0, 3.0, 1.0, 1.0 },
+            { 4.0, 2.0, 2.0, 0.0, 1.0, 0.0 }
+    };
+    std::vector<int> got_songs = recommendation_system.get_similar_songs(3, 10, user_ids, song_ids);
+    std::vector<int> expected_songs = { 2, 5, 1, 4, 6 };
+
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
+TEST(RecommendationSystem, get_similar_songs_with_deleted) {
+    RecommendationSystem recommendation_system;
+    std::vector<int> user_ids = { 2, 4, 6 };
+    std::vector<int> song_ids = { 1, 2, 4, 6, 8, 9 };
+
+    recommendation_system.pref_matrix = {
+            { 0.0, 3.0, 4.0, 0.0, 0.0, 0.0 },
+            { 1.0, 0.0, 2.0, 3.0, 1.0, 1.0 },
+            { 4.0, 2.0, 2.0, 0.0, 1.0, 0.0 }
+    };
+    std::vector<int> got_songs = recommendation_system.get_similar_songs(4, 10, user_ids, song_ids);
+    std::vector<int> expected_songs = { 2, 8, 1, 6, 9 };
+
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
+TEST(RecommendationSystem, get_less_similar_songs) {
+    RecommendationSystem recommendation_system;
+    std::vector<int> user_ids = { 1, 2, 3 };
+    std::vector<int> song_ids = { 1, 2, 3, 4, 5, 6 };
+
+    recommendation_system.pref_matrix = {
+            { 0.0, 3.0, 4.0, 0.0, 0.0, 0.0 },
+            { 1.0, 0.0, 2.0, 3.0, 1.0, 1.0 },
+            { 4.0, 2.0, 2.0, 0.0, 1.0, 0.0 }
+    };
+    std::vector<int> got_songs = recommendation_system.get_similar_songs(3, 3, user_ids, song_ids);
+    std::vector<int> expected_songs = { 2, 5, 1 };
+
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
 

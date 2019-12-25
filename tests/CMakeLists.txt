@@ -24,7 +24,7 @@ set(RECOMMENDATION_SYSTEM_SRC
         ../project/src/json.cpp
         ../project/src/db_entities.cpp
         ../project/src/db_wrapper.cpp
-        test_recommendation_system.cpp)
+        test_recommendation_server.cpp)
 
 add_executable(tests ${RECOMMENDATION_SYSTEM_SRC})
 target_link_libraries(tests ${GTEST_LIBRARIES} Threads::Threads ${CONCPP_LIB})

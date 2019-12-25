@@ -44,6 +44,21 @@ TEST(DbWorkerRecommendations, add_songs) {
     EXPECT_EQ(expected_songs, got_songs);
 }
 
+TEST(DbWorkerRecommendations, get_songs_by_ids) {
+    DbWorkerRecommendations worker("test", "localhost", "root", "");
+
+    std::vector<int> song_ids = { 1, 3, 4, 6 };
+    std::vector<Song> expected_songs = {
+            Song(1, "Nice Boi", "Eskimo Callboy", "metalcore", 159, "2019-11-01"),
+            Song(3, "Waiting for You", "Nick Cave & The Bad Seeds", "alternative rock", 234, "2019-10-04"),
+            Song(4, "Hunger", "The Score", "alternative rock", 123, "2019-08-09"),
+            Song(6, "Into My Arms", "Nick Cave & The Bad Seeds", "alternative rock", 256, "1997-03-02")
+    };
+
+    std::vector<Song> got_songs = worker.get_songs_by_ids(song_ids);
+    EXPECT_EQ(expected_songs, got_songs);
+}
+
 TEST(DbWorkerRecommendations, get_new_songs) {
     DbWorkerRecommendations worker("test", "localhost", "root", "");
     const int size = 3;
