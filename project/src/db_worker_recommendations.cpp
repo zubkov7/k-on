@@ -2,7 +2,8 @@
 
 
 DbWorkerRecommendations::DbWorkerRecommendations(const std::string &database, const std::string &host,
-        const std::string &user, const std::string &password) : DbWorker(database, host, user, password) {}
+                                                 const std::string &user, const std::string &password) : DbWorker(
+        database, host, user, password) {}
 
 DbWorkerRecommendations::~DbWorkerRecommendations() = default;
 
@@ -103,6 +104,26 @@ std::vector<Song> DbWorkerRecommendations::get_songs_by_ids(const std::vector<in
                                result->getString("genre"), result->getInt("duration"),
                                result->getString("date"));
         }
+    }
+    return songs;
+}
+
+std::vector<Song> DbWorkerRecommendations::get_songs_by_likes(int user_id) const {
+    std::vector<Song> songs;
+
+    sql::ResultSet *result = wrapper.execute_query(
+            "select song.id, name, author, genre, duration, date "
+            "from song "
+            "join like_dislike on song.id = song_id "
+            "where user_id = " + std::to_string(user_id) +
+            " and value = true "
+            "order by like_dislike.datetime desc"
+    );
+
+    while (result->next()) {
+        songs.emplace_back(result->getInt("id"), result->getString("name"), result->getString("author"),
+                           result->getString("genre"), result->getInt("duration"),
+                           result->getString("date"));
     }
     return songs;
 }

@@ -26,6 +26,7 @@ private:
     std::string on_recent(const boost::property_tree::ptree &root) const;
     std::string on_similar(const boost::property_tree::ptree &root) const;
     std::string on_update(const boost::property_tree::ptree &root) const;
+    std::string on_liked_songs(const boost::property_tree::ptree &root) const;
 };
 
 

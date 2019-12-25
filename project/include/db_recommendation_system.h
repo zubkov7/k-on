@@ -19,6 +19,7 @@ public:
     std::vector<Song> get_popular(int count) const;
     std::vector<Song> get_new(int count) const;
     std::vector<Song> get_similar(int song_id, int count) const;
+    std::vector<Song> get_liked_songs(int user_id) const;
 
 private:
     DbWorkerRecommendations worker;

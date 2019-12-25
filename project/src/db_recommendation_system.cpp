@@ -56,3 +56,7 @@ std::vector<Song> DbRecommendationSystem::get_similar(int song_id, int count) co
     std::vector<int> result = recommendation_system.get_similar_songs(song_id, count, user_ids, song_ids);
     return worker.get_songs_by_ids(result);
 }
+
+std::vector<Song> DbRecommendationSystem::get_liked_songs(int user_id) const {
+    return worker.get_songs_by_likes(user_id);
+}

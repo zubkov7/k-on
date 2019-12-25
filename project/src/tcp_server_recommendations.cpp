@@ -29,6 +29,10 @@ std::string TcpServerRecommendations::handle_request(const std::string &request)
             return on_update(root);
         }
 
+        if (method == "get_liked_songs") {
+            return on_liked_songs(root);
+        }
+
         return on_fail(500, "Internal server error: request to the wrong method");
     }
     catch (boost::property_tree::ptree_bad_path const &e) {
@@ -126,4 +130,18 @@ std::string TcpServerRecommendations::on_update(const boost::property_tree::ptre
     }
 
     return on_recommendations(root);
+}
+
+std::string TcpServerRecommendations::on_liked_songs(const boost::property_tree::ptree &root) const {
+    int user = root.get<int>("user_id");
+
+    std::vector<Song> songs;
+    try {
+        songs = recommendation_system.get_liked_songs(user);
+    } catch (sql::SQLException &e) {
+        std::cout << e.what() << std::endl;
+        return on_fail(500, "Database error");
+    }
+
+    return songs_to_answer(songs);
 }
