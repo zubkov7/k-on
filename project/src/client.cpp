@@ -60,6 +60,18 @@ void Client::handle_read(const boost::system::error_code &e,
 
 
     std::string url = p.release().target().to_string();  // url
+    std::stringstream response_stream;
+
+    if (url == "/login" || url == "/signup") {
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/form.html",url.erase(0,1),"");
+        response_stream << "HTTP/1.1 200 OK\r\n"
+                        << "Content-Length:"
+                        << html.size()
+                        << "\r\n\r\n"
+                        << html;
+    }
+    else
+        {
     boost::beast::http::request_parser<boost::beast::http::string_body> p_tmp;
     p_tmp.put(boost::asio::buffer(str_buf), er);
     std::string tmp_session;
@@ -86,31 +98,34 @@ void Client::handle_read(const boost::system::error_code &e,
 
     int status = response.get<int>("status");
 
-    std::stringstream response_stream;
 
     if (status == 500) {  // Внутренняя ошибка сервера
-        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/error.html", "",
+                                      response.get<std::string>("message"));
         response_stream << "HTTP/1.1 500 Internal Server Error\r\n"
                         << "Content-Length:"
                         << html.size()
                         << "\r\n\r\n"
                         << html;
+
     } else if (status == 503) {  // Какой-то из сервисов недоступен
-        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/error.html", "",
+                                      response.get<std::string>("message"));
         response_stream << "HTTP/1.1 503 Service Unavailable\r\n"
                         << "Content-Length:"
                         << html.size()
                         << "\r\n\r\n"
                         << html;
     } else if (status == 400) {  // Неправильный запрос
-        std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/error.html", "",
+                                      response.get<std::string>("message"));
         response_stream << "HTTP/1.1 400 Bad Request\r\n"
                         << "Content-Length:"
                         << html.size()
                         << "\r\n\r\n"
                         << html;
     } else if (status == 403) {  // Не залогинен нужно перевести на страницу логина
-        std::string html = parse_html("../form.html", "login", "");
+        std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/form.html", "login", "");
         response_stream << "HTTP/1.1 403 Forbidden\r\n"
                         << "Content-Length:"
                         << html.size()
@@ -133,16 +148,15 @@ void Client::handle_read(const boost::system::error_code &e,
     } else if (status == 200) {  // Вернуть ответ
         std::string login;
         if (response.find("login") == response.not_found()) {
-            login = "some login";
+            login = "<div><a href='/login'>You can login</a></div>";
         } else {
-            login = response.get<std::string>("login");
+            login = response.get<std::string>("login") +
+                    "\n<div><a href='/logout'>Logout</a></div>";
         }
 
 
-
-
         std::string html = parse_html("/Users/elenaelizarova/CLionProjects/k-on/project/index.html",
-                login,json_to_songs(response));
+                                      login, json_to_songs(response));
         //stringify_json(response));
         response_stream << "HTTP/1.1 200 OK\r\n"
                         << "Content-Length:"
@@ -157,6 +171,7 @@ void Client::handle_read(const boost::system::error_code &e,
         response_stream << "\r\n\r\n"
                         << html;
     }
+        }
 
 
     int k = 0;
@@ -187,8 +202,10 @@ std::string Client::parse_html(std::string html_way, std::string user_info, std:
     in.close();
     if (user_info == "login") {
         line = std::regex_replace(buffer.str(), std::regex("\\$root"), "login");
-    } else if (user_info == "sign_up") {
+        line = std::regex_replace(buffer.str(), std::regex("\\$another"), "<div><a href='/signup'>signup</a></div>");
+    } else if (user_info == "signup") {
         line = std::regex_replace(buffer.str(), std::regex("\\$root"), "signup");
+        line = std::regex_replace(buffer.str(), std::regex("\\$another"), "<div><a href='/login'>login</a></div>");
 
     } else {
         line = std::regex_replace(buffer.str(), std::regex("\\$user"), user_info);
@@ -197,7 +214,7 @@ std::string Client::parse_html(std::string html_way, std::string user_info, std:
     return line;
 }
 
-std::string Client::json_to_songs(boost::property_tree::ptree& response) {
+std::string Client::json_to_songs(boost::property_tree::ptree &response) {
     auto songs_array = response.get_child("songs");
 
     std::string str;
@@ -206,15 +223,14 @@ std::string Client::json_to_songs(boost::property_tree::ptree& response) {
         int minutes = duration / 60;
         int seconds_val = duration - minutes * 60;
         std::string seconds = std::to_string(seconds_val);
-        if (seconds_val < 10)
-        {
+        if (seconds_val < 10) {
             seconds = "0" + seconds;
         }
         str += "<div> <a href='/similarsong?song_id=" + std::to_string(song.second.get<int>("id")) + "'>" +
                song.second.get<std::string>("author") + " - " +
                song.second.get<std::string>("name") + "</a>  " +
-               std::to_string(minutes) + ":" +seconds +
-               + "<a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&value=1' > Like </a>" +
+               std::to_string(minutes) + ":" + seconds +
+               +"<a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&value=1' > Like </a>" +
                "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) + "'> Listen </a></div>" +
                "\n";
     }
