@@ -31,6 +31,7 @@ CREATE TABLE like_dislike (
   user_id MEDIUMINT UNSIGNED NOT NULL,
   song_id MEDIUMINT UNSIGNED NOT NULL,
   value BOOL,
+  datetime DATETIME DEFAULT NOW(),
 
   PRIMARY KEY (id),
 
