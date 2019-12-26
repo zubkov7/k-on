@@ -20,7 +20,9 @@ INSERT INTO song (name, author, genre, duration, date)
   ("Sweet Disposition", "The Temper Trap", "indie rock", 234, "2008-01-01"),
   ("Into My Arms", "Nick Cave & The Bad Seeds", "alternative rock", 256, "1997-03-02"),
   ("Prey", "The Neighbourhood", "indie pop", 282, "2015-10-30"),
-  ("Mr. Brightside", "The Killers", "alternative rock", 222, "2003-09-29");
+  ("Mr. Brightside", "The Killers", "alternative rock", 222, "2003-09-29"),
+  ("Bright Horses", "Nick Cave & The Bad Seeds", "alternative rock", 292, "2019-10-04"),
+  ("The Man", "The Killers", "alternative rock", 248, "2017-09-22");
 
  INSERT INTO like_dislike (user_id, song_id, value)
    VALUES
