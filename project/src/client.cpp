@@ -207,7 +207,7 @@ std::string Client::json_to_songs(boost::property_tree::ptree &response,std::str
                song.second.get<std::string>("name") + "</a>  " +
                std::to_string(minutes) + ":" + seconds +
                +"<div>\n</div><a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&like=1&next=" +url + "' > Like </a>" +
-               "<a href='/listen?song_id=" + "Listen </a></div><div><br></div>" ;
+               "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) +"&next="+url+ "'> Listen </a></div><div><br></div>" ;
     }
 
     return str;
