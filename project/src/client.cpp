@@ -48,7 +48,7 @@ void Client::handle_read(const boost::system::error_code &e,
     std::string str_buf(m_Buf);
     p.put(boost::asio::buffer(str_buf), er);
 
-    std::cout << m_Buf << std::endl;
+//    std::cout << m_Buf << std::endl;
 
     std::stringstream response_stream;
     std::string url = p.release().target().to_string();  // url
@@ -68,7 +68,6 @@ void Client::handle_read(const boost::system::error_code &e,
         memset(m_Buf, '\0', 1024);
         try {
             tmp_session = p_tmp.release().at("Cookie").to_string();
-            std::cout << "tmp session: " << tmp_session << std::endl;
             session = tmp_session.substr(tmp_session.find("=") + 1);  // сессия
         }
         catch (std::out_of_range &e) {
@@ -76,7 +75,6 @@ void Client::handle_read(const boost::system::error_code &e,
             session = "";
         }
 
-        std::cout << "session: " << session << std::endl;
 
 
         Manager manager;
@@ -200,6 +198,7 @@ std::string Client::json_to_songs(boost::property_tree::ptree &response,std::str
     auto songs_array = response.get_child("songs");
 
     std::string str;
+    url.erase(0, 1);
     for (auto song : songs_array) {
         int duration = song.second.get<int>("duration");
         int minutes = duration / 60;
@@ -213,7 +212,7 @@ std::string Client::json_to_songs(boost::property_tree::ptree &response,std::str
                song.second.get<std::string>("name") + "</a>  " +
                std::to_string(minutes) + ":" + seconds +
                +"<div>\n</div><a href='/like?song_id=" + std::to_string(song.second.get<int>("id")) + "&like=1&next=" +url + "' > Like </a>" +
-               "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) +"&next="+url+ "'> Listen </a></div><div><br></div>" ;
+               "<a href='/listen?song_id=" + std::to_string(song.second.get<int>("id")) +"&next="+url + "'> Listen </a></div><div><br></div>" ;
     }
 
     return str;
