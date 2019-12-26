@@ -113,6 +113,7 @@ std::string Manager::on_auth(const UrlParser &url_parser, const std::string &met
             root = parse_to_json(answer);
 
             root.put("session", session);
+            root.put("status", 301);
             root.put("page", "index");
             root.put("login", login);
 
@@ -151,7 +152,7 @@ std::string Manager::on_listen(const UrlParser &url_parser, const std::string &s
         root = parse_to_json(answer);
 
         if (root.get<int>("status") == 301) {
-            root.put("location", next);
+            root.put("page", next);
             return stringify_json(root);
         } else {
             return answer;
@@ -181,7 +182,7 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
         root = parse_to_json(answer);
 
         if (root.get<int>("status") == 301) {
-            root.put("location", next);
+            root.put("page", next);
             return stringify_json(root);
         } else {
             return answer;
