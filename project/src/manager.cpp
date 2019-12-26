@@ -147,8 +147,9 @@ std::string Manager::on_listen(const UrlParser &url_parser, const std::string &s
         std::string answer = read();
         root = parse_to_json(answer);
 
-        if (root.get<int>("status") == 200) {
-            return on_get_page(session, get_method(next));
+        if (root.get<int>("status") == 301) {
+            root.put("location", next);
+            return stringify_json(root);
         } else {
             return answer;
         }
@@ -176,8 +177,9 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
         std::string answer = read();
         root = parse_to_json(answer);
 
-        if (root.get<int>("status") == 200) {
-            return on_get_page(session, get_method(next));
+        if (root.get<int>("status") == 301) {
+            root.put("location", next);
+            return stringify_json(root);
         } else {
             return answer;
         }
