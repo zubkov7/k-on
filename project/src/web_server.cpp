@@ -9,7 +9,7 @@
 
 #define DEFAULT_PORT 5555
 #define DEFAULT_NUM_THREADS 4
-#define DEFAULT_CONFIG_PATH "/Users/elenaelizarova/CLionProjects/k-on/project/config.txt"
+#define DEFAULT_CONFIG_PATH "../config.txt"
 
 void Web_server::start() {
     if (config_path =="")
