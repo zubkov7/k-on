@@ -147,7 +147,7 @@ void Client::handle_read(const boost::system::error_code &e,
         } else if (status == 200) {  // Вернуть ответ
             std::string login;
             if (response.find("login") == response.not_found() || response.get<std::string>("login") == "") {
-                login = "";
+                login = "<div><a href='/login' style='margin-right: 10px'>LogIn</a><a href='/signup'>SignUp</a></div>";
             } else {
                 login = response.get<std::string>("login") + "<div><a href='/logout'>Logout</a></div>";
             }
