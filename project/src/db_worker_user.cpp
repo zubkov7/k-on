@@ -115,7 +115,6 @@ bool DbWorkerUser::like_song(int song_id, int user_id, bool value) const {
     } else {  // Меняем значение у существующей записи
         query << "update like_dislike set value = "
               << value
-              << " datetime = 'getdate()'"
               << " where song_id = "
               << song_id
               << " and user_id = "

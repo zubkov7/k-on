@@ -48,7 +48,7 @@ std::string UserSystem::increment_listening(int song_id, int user_id) const {
     }
 
     int quantity_of_listening = db_worker_.increment_listening(song_id, user_id);
-    root.put("status", "200");
+    root.put("status", "301");
     root.put("quantity_of_listening", quantity_of_listening);
     return stringify_json(root);
 }
@@ -62,7 +62,7 @@ std::string UserSystem::like_song(int song_id, int user_id, bool value) const {
     }
 
     db_worker_.like_song(song_id, user_id, value);
-    root.put("status", "200");
+    root.put("status", "301");
     if (value) {
         root.put("message", "like delivered");
     } else {

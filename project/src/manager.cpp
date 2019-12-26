@@ -46,6 +46,9 @@ std::string Manager::handle_request(const std::string &request, const std::strin
         if (path == "/update") {
             return on_get_page(session, "update_recommendations");
         }
+        if (path == "/history") {
+            return on_get_page(session, "get_liked_songs");
+        }
 
         return on_fail(400, "bad request");
     }
@@ -88,9 +91,19 @@ std::string Manager::on_auth(const UrlParser &url_parser, const std::string &met
         } else {  // Логин или регистрация прошла успешно
             std::string session = root.get<std::string>("session");  // Сохраняем сессию пользователя
 
+            connect(USER_HOST, USER_PORT);
+            root.clear();
+            root.put("method", "get_user_id");
+            root.put("session", session);
+            write(stringify_json(root));
+
+            root = parse_to_json(read());
+
+            int user_id = root.get<int>("user_id");
+
             root.clear();
             root.put("method", "update_recommendations");
-            root.put("login", login);
+            root.put("user_id", user_id);
 
             connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
             write(stringify_json(root));  // Отправлем запрос на обновление рекоммендаций пользователя
@@ -137,8 +150,9 @@ std::string Manager::on_listen(const UrlParser &url_parser, const std::string &s
         std::string answer = read();
         root = parse_to_json(answer);
 
-        if (root.get<int>("status") == 200) {
-            return on_get_page(session, get_method(next));
+        if (root.get<int>("status") == 301) {
+            root.put("location", next);
+            return stringify_json(root);
         } else {
             return answer;
         }
@@ -166,8 +180,9 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
         std::string answer = read();
         root = parse_to_json(answer);
 
-        if (root.get<int>("status") == 200) {
-            return on_get_page(session, get_method(next));
+        if (root.get<int>("status") == 301) {
+            root.put("location", next);
+            return stringify_json(root);
         } else {
             return answer;
         }
@@ -207,7 +222,6 @@ std::string Manager::on_get_page(const std::string &session, const std::string &
         root = parse_to_json(answer);
         root.put("login", login);
         root.put("page", get_page(method));
-        root.put("status", "200");
 
         return stringify_json(root);
     }
@@ -290,9 +304,11 @@ std::string Manager::get_method(const std::string &next) {
 std::string Manager::get_page(const std::string &method) {
     if (method == "get_popular") {
         return "top";
-    } else if (method == "get_recommendations") {
+    } else if (method == "get_recommendations" || method == "update_recommendations") {
         return "index";
     } else if (method == "get_new") {
         return "recent";
+    } else if (method == "get_liked_songs") {
+        return "history";
     }
 }
