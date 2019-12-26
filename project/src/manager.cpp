@@ -32,7 +32,7 @@ std::string Manager::handle_request(const std::string &request, const std::strin
             return on_listen(url_parser, session);
         }
         if (path == "/index") {
-            return on_index_or_update(session, "get_recommendations");
+            return on_get_page(session, "get_recommendations");
         }
         if (path == "/top") {
             return on_top(session);
@@ -44,7 +44,7 @@ std::string Manager::handle_request(const std::string &request, const std::strin
             return on_similar_song(url_parser, session);
         }
         if (path == "/update") {
-            return on_index_or_update(session, "update_recommendations");
+            return on_get_page(session, "update_recommendations");
         }
 
         return on_fail(400, "bad request");
@@ -124,6 +124,7 @@ std::string Manager::on_logout(const std::string &session) {
 std::string Manager::on_listen(const UrlParser &url_parser, const std::string &session) {
     if (url_parser.has_parameter("song_id")) {
         std::string song_id = url_parser.get_parameter("song_id");
+        std::string next = url_parser.get_parameter("next");
 
         boost::property_tree::ptree root;
         root.put("method", "listen");
@@ -137,14 +138,13 @@ std::string Manager::on_listen(const UrlParser &url_parser, const std::string &s
         root = parse_to_json(answer);
 
         if (root.get<int>("status") == 200) {
-            return on_index_or_update(session, "get_recommendations");
+            return on_get_page(session, get_method(next));
         } else {
             return answer;
         }
 
-        return stringify_json(root);
     } else {
-        return on_fail(400, "bad request, please add get parameter: song_id");
+        return on_fail(400, "bad request, please add get parameter: song_id and next");
     }
 }
 
@@ -152,6 +152,7 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
     if (url_parser.has_parameter("song_id") && url_parser.has_parameter("like")) {
         std::string song_id = url_parser.get_parameter("song_id");
         std::string like = url_parser.get_parameter("like");
+        std::string next = url_parser.get_parameter("next");
 
         boost::property_tree::ptree root;
         root.put("method", "like");
@@ -166,16 +167,16 @@ std::string Manager::on_like(const UrlParser &url_parser, const std::string &ses
         root = parse_to_json(answer);
 
         if (root.get<int>("status") == 200) {
-            return on_index_or_update(session, "get_recommendations");
+            return on_get_page(session, get_method(next));
         } else {
             return answer;
         }
     } else {
-        return on_fail(400, "bad request, please add get parameter: song_id and like");
+        return on_fail(400, "bad request, please add get parameter: song_id, like and next");
     }
 }
 
-std::string Manager::on_index_or_update(const std::string &session, const std::string &method) {
+std::string Manager::on_get_page(const std::string &session, const std::string &method) {
     boost::property_tree::ptree root;
     root.put("method", "get_user_id");
     root.put("session", session);
@@ -205,7 +206,7 @@ std::string Manager::on_index_or_update(const std::string &session, const std::s
 
         root = parse_to_json(answer);
         root.put("login", login);
-        root.put("page", "index");
+        root.put("page", get_page(method));
         root.put("status", "200");
 
         return stringify_json(root);
@@ -273,5 +274,25 @@ void Manager::add_login(boost::property_tree::ptree &root, const std::string &se
         root.put("login", request.get<std::string>("login"));
     } else {
         root.put("login", "");
+    }
+}
+
+std::string Manager::get_method(const std::string &next) {
+    if (next == "/top") {
+        return "get_popular";
+    } else if (next == "/index") {
+        return "get_recommendations";
+    } else if (next == "/recent") {
+        return "get_new";
+    }
+}
+
+std::string Manager::get_page(const std::string &method) {
+    if (method == "get_popular") {
+        return "top";
+    } else if (method == "get_recommendations") {
+        return "index";
+    } else if (method == "get_new") {
+        return "recent";
     }
 }

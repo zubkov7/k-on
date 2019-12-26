@@ -27,11 +27,13 @@ private:
     std::string on_logout(const std::string &session);
     std::string on_listen(const UrlParser &url_parser, const std::string &session);
     std::string on_like(const UrlParser &url_parser, const std::string &session);
-    std::string on_index_or_update(const std::string &session, const std::string &method);
+    std::string on_get_page(const std::string &session, const std::string &method);
     std::string on_top(const std::string &session);
     std::string on_recent(const std::string &session);
     std::string on_similar_song(const UrlParser &url_parser, const std::string &session);
     void add_login(boost::property_tree::ptree &root, const std::string &session);
+    std::string get_method(const std::string &next);
+    std::string get_page(const std::string &method);
 };
 
 
