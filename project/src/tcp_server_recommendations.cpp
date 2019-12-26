@@ -1,7 +1,7 @@
 #include "tcp_server_recommendations.h"
 #include "json.h"
 
-#define NUMBER_OF_SONGS 10
+#define NUMBER_OF_SONGS 20
 
 
 TcpServerRecommendations::TcpServerRecommendations(unsigned short port, const std::string &database,
