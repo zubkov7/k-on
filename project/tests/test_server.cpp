@@ -2,8 +2,8 @@
 #include <cstddef>
 #include <iostream>
 #include <fstream>
-#include "include/web_server.h"
-#include "include/client.h"
+#include "web_server.h"
+#include "client.h"
 #include <string>
 #include <boost/property_tree/json_parser.hpp>
 #include <regex>
