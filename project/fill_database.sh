@@ -22,7 +22,18 @@ INSERT INTO song (name, author, genre, duration, date)
   ("Prey", "The Neighbourhood", "indie pop", 282, "2015-10-30"),
   ("Mr. Brightside", "The Killers", "alternative rock", 222, "2003-09-29"),
   ("Bright Horses", "Nick Cave & The Bad Seeds", "alternative rock", 292, "2019-10-04"),
-  ("The Man", "The Killers", "alternative rock", 248, "2017-09-22");
+  ("The Man", "The Killers", "alternative rock", 248, "2017-09-22"),
+  ("Моя душа", "Andro", "pop", 155, "2019-12-19"),
+  ("nextstep", "lowlife", "R&B", 148, "2019-12-17"),
+  ("Мишка", "Пошлая Молли feat. KATERINA", "pop", 158, "2019-12-19"),
+  ("associate", "масло черного тмина", "hip-hop", 126, "2019-12-19"),
+  ("Ready To Die", "EARTHGANG", "hip-hop", 198, "2019-09-01"),
+  ("Angelic Hoodrat", "Kenny Mason", "rap", 172, "2019-12-17"),
+  ("Мое любимое", "Елена Темникова", "pop", 234, "2019-12-19"),
+  ("Напомни", "Скриптонит", "hip-hop", 201, "2019-12-24"),
+  ("Поворот (ft. Niman)", "Скриптонит", "hip-hop", 244, "2019-12-24"),
+  ("Ага, ну", "Скриптонит", "hip-hop", 187, "2019-12-24");
+
 
  INSERT INTO like_dislike (user_id, song_id, value)
    VALUES
