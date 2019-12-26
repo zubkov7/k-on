@@ -12,7 +12,8 @@ CREATE TABLE user (
   login VARCHAR(50) NOT NULL,
   password VARCHAR(50) NOT NULL,
 
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE (login)
 );
 
 CREATE TABLE song (
@@ -58,6 +59,18 @@ CREATE TABLE listen (
 
   FOREIGN KEY (song_id)
     REFERENCES song(id)
+    ON DELETE CASCADE
+);
+
+CREATE TABLE session (
+  id MEDIUMINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  session VARCHAR(65) NOT NULL,
+  login VARCHAR(50) NOT NULL,
+
+  PRIMARY KEY (id),
+
+  FOREIGN KEY (login)
+    REFERENCES user(login)
     ON DELETE CASCADE
 );
 
