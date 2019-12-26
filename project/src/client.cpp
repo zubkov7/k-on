@@ -125,7 +125,6 @@ void Client::handle_read(const boost::system::error_code &e,
             response_stream << "HTTP/1.1 301 Moved Permanently\r\n"
                             << "Location:/"
                             << response.get<std::string>("page")
-                            << "\r\n\r\n"
                             << "\r\nSet-Cookie: sessionid=";
             if (response.find("session") == response.not_found()) {
                 response_stream << session;
@@ -150,7 +149,7 @@ void Client::handle_read(const boost::system::error_code &e,
             if (response.find("login") == response.not_found()) {
                 login = "some login";
             } else {
-                login = response.get<std::string>("login");
+                login = response.get<std::string>("login") + "<div><a href='/logout'>Logout</a></div>";
             }
 
             std::string html = parse_html("../index.html", login, json_to_songs(response,url));
