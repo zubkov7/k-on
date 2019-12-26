@@ -219,7 +219,6 @@ std::string Manager::on_get_page(const std::string &session, const std::string &
         root = parse_to_json(answer);
         root.put("login", login);
         root.put("page", get_page(method));
-        root.put("status", "200");
 
         return stringify_json(root);
     }
