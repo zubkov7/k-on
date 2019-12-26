@@ -40,11 +40,12 @@ void TcpServer::start_server() {
 }
 
 void TcpServer::on_accept(boost::asio::ip::tcp::socket sock) const {
-    std::cout << "+client from: "
-              << sock.remote_endpoint().address().to_string()
-              << ':'
-              << sock.remote_endpoint().port()
-              << std::endl;
+    std::cout << "+client";
+//              << "from: "
+//              << sock.remote_endpoint().address().to_string()
+//              << ':'
+//              << sock.remote_endpoint().port()
+//              << std::endl;
 
     try {
         // Чтение данных из сокета клиента
