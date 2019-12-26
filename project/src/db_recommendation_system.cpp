@@ -10,10 +10,15 @@ DbRecommendationSystem::~DbRecommendationSystem() = default;
 
 std::vector<Song> DbRecommendationSystem::get_recommendations(int user_id, int count) const {
     auto recommendations = worker.get_recommendations(user_id, count);
+
     if (recommendations.empty()) {
         update_recommendations(user_id);
         recommendations = worker.get_recommendations(user_id, count);
     }
+    if (recommendations.empty()) {
+        recommendations = get_popular(count);
+    }
+
     return recommendations;
 }
 
@@ -52,7 +57,10 @@ std::vector<Song> DbRecommendationSystem::get_new(int count) const {
 std::vector<Song> DbRecommendationSystem::get_similar(int song_id, int count) const {
     std::vector<int> user_ids = worker.get_user_ids();
     std::vector<int> song_ids = worker.get_song_ids();
+    std::vector<LikeDislike> likes_dislikes = worker.get_likes_dislikes();
+    std::vector<Listen> listens = worker.get_listens();
 
+    recommendation_system.update_pref_matrix(user_ids, song_ids, likes_dislikes, listens);
     std::vector<int> result = recommendation_system.get_similar_songs(song_id, count, user_ids, song_ids);
     return worker.get_songs_by_ids(result);
 }
