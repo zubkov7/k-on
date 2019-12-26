@@ -123,9 +123,21 @@ void Client::handle_read(const boost::system::error_code &e,
 
         } else if (status == 301) {  // Не залогинен нужно перевести на страницу логина
             response_stream << "HTTP/1.1 301 Moved Permanently\r\n"
-                            << "Location:"
-                            << response.get<std::string>("location")
-                            << "\r\n\r\n";
+                            << "Location:/"
+                            << response.get<std::string>("page")
+                            << "\r\n\r\n"
+                            << "\r\nSet-Cookie: sessionid=";
+            if (response.find("session") == response.not_found()) {
+                response_stream << session;
+            } else {
+                response_stream << response.get<std::string>("session");
+            }
+            response_stream << "\r\n\r\n";
+
+
+
+
+
         } else if (status == 401) {  // Неправильный логин или пароль
             std::string html = parse_html("../index.html", "", response.get<std::string>("message"));
             response_stream << "HTTP/1.1 401 Unauthorized\r\n"
