@@ -46,6 +46,9 @@ std::string Manager::handle_request(const std::string &request, const std::strin
         if (path == "/update") {
             return on_get_page(session, "update_recommendations");
         }
+        if (path == "/history") {
+            return on_get_page(session, "get_liked_songs");
+        }
 
         return on_fail(400, "bad request");
     }
@@ -305,5 +308,7 @@ std::string Manager::get_page(const std::string &method) {
         return "index";
     } else if (method == "get_new") {
         return "recent";
+    } else if (method == "get_liked_songs") {
+        return "history";
     }
 }
