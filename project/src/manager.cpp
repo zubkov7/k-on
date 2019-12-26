@@ -301,7 +301,7 @@ std::string Manager::get_method(const std::string &next) {
 std::string Manager::get_page(const std::string &method) {
     if (method == "get_popular") {
         return "top";
-    } else if (method == "get_recommendations") {
+    } else if (method == "get_recommendations" || method == "update_recommendations") {
         return "index";
     } else if (method == "get_new") {
         return "recent";
