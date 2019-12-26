@@ -6,11 +6,13 @@
 
 #include <string>
 
+#define BUF_SIZE 10000
+
 
 class Client : public std::enable_shared_from_this<Client> {
     boost::asio::ip::tcp::socket m_Sock;
-    char m_Buf[4096];
-    char m_SendBuf[4096];
+    char m_Buf[BUF_SIZE];
+    char m_SendBuf[BUF_SIZE];
 
 public:
     Client(boost::asio::io_service &io) : m_Sock(io) {}
