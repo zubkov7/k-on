@@ -88,9 +88,19 @@ std::string Manager::on_auth(const UrlParser &url_parser, const std::string &met
         } else {  // Логин или регистрация прошла успешно
             std::string session = root.get<std::string>("session");  // Сохраняем сессию пользователя
 
+            connect(USER_HOST, USER_PORT);
+            root.clear();
+            root.put("method", "get_user_id");
+            root.put("session", session);
+            write(stringify_json(root));
+
+            root = parse_to_json(read());
+
+            int user_id = root.get<int>("user_id");
+
             root.clear();
             root.put("method", "update_recommendations");
-            root.put("login", login);
+            root.put("user_id", user_id);
 
             connect(RECOMMENDATION_HOST, RECOMMENDATION_PORT);
             write(stringify_json(root));  // Отправлем запрос на обновление рекоммендаций пользователя
