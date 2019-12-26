@@ -65,7 +65,7 @@ void Client::handle_read(const boost::system::error_code &e,
         std::string tmp_session;
         std::string session;  // сессия
 
-        memset(m_Buf, '\0', 1024);
+        memset(m_Buf, '\0', BUF_SIZE);
         try {
             tmp_session = p_tmp.release().at("Cookie").to_string();
             session = tmp_session.substr(tmp_session.find("=") + 1);  // сессия
@@ -146,8 +146,8 @@ void Client::handle_read(const boost::system::error_code &e,
                             << html;
         } else if (status == 200) {  // Вернуть ответ
             std::string login;
-            if (response.find("login") == response.not_found()) {
-                login = "some login";
+            if (response.find("login") == response.not_found() || response.get<std::string>("login") == "") {
+                login = "";
             } else {
                 login = response.get<std::string>("login") + "<div><a href='/logout'>Logout</a></div>";
             }
