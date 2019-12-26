@@ -155,7 +155,7 @@ INSERT INTO song (name, author, genre, duration, date)
    (4, 46, false),
    (4, 10, false),
    (4, 11, false),
-   (4, 12, false),
+   (4, 12, false);
 
 INSERT INTO listen (user_id, song_id, count)
   VALUES
